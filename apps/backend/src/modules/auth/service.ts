@@ -1,28 +1,29 @@
-// Service handle business logic, decoupled from Elysia controller
-import { status } from 'elysia'
+import { prisma } from "db";
 
-import
-import { AuthModel } from './model'
-
-// If a class doesn't need to store a property,
-// you may use `abstract class` to avoid class allocation
-export abstract class Auth {
-    static async generateAndSaveTokenToDB(userId: string) {
-        return 'token'
+export abstract class AuthService {
+    static async signUp(email : string , password : string ):Promise<string> {
+        const user = await prisma.user.create({
+            data:{
+                email,
+                password: await Bun.password.hash(password)
+            }
+        })
+        return user.id.toString();
     }
-	static async signIn({ username, password }) {
-		
+    static async signIn(email : string , password : string ):Promise<{correctCredentials: boolean, userId?: string}> {
+        const user = await prisma.user.findFirst({
+            where:{
+                email
+            }
+        })
+        if(!user){
+            return {correctCredentials: false}
+        }
+        const isPasswordValid = await Bun.password.verify(password, user.password)
 
-		if (!await Bun.password.verify(password, user.password))
-			// You can throw an HTTP error directly
-			throw status(
-				400,
-				'Invalid username or password' 
-			)
-
-		return {
-			username,
-			token: await generateAndSaveTokenToDB(user.id)
-		}
-	}
+        if(!isPasswordValid){
+            return {correctCredentials: false}
+        }
+        return {correctCredentials: true, userId: user.id.toString()}
+    }
 }

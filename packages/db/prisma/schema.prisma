@@ -8,7 +8,71 @@ generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
 }
-
 datasource db {
   provider = "postgresql"
+}
+
+enum MessageRole {
+  USER
+  ASSISTANT
+  SYSTEM
+}
+
+model User{
+  id String @id @default(uuid())
+  email String @unique
+  password String
+  credits Int @default(100)
+  apikeys Apikeys[]
+  transactions Transactions[]
+  usagelogs UsageLogs[]
+  conversations Conversation[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+model Conversation{
+  id String @id @default(uuid())
+  userId String
+  user User @relation(fields: [userId], references: [id])
+  title String
+  messages Message[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+model Message{
+  id String @id @default(uuid())
+  conversationId String
+  conversation Conversation @relation(fields: [conversationId], references: [id])
+  content String
+  role MessageRole @default(USER)
+  createdAt DateTime @default(now())
+}
+
+model Apikeys{
+  id String @id @default(uuid())
+  userId String
+  user User @relation(fields: [userId], references: [id])
+  key String
+  disabled Boolean @default(false)
+  usagelogs UsageLogs[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Transactions{
+  id String @id @default(uuid())
+  userId String
+  user User @relation(fields: [userId], references: [id])
+  amount Int
+  createdAt DateTime @default(now())
+}
+
+model UsageLogs{
+  id String @id @default(uuid())
+  userId String
+  user User @relation(fields: [userId], references: [id])
+  apikeyId String
+  apikey Apikeys @relation(fields: [apikeyId], references: [id])
+  credits Int
+  createdAt DateTime @default(now())
 }

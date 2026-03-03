@@ -1,19 +1,29 @@
-// Model define the data structure and validation for the request and response
-import { t, type UnwrapSchema } from 'elysia';
+import { t, type UnwrapSchema } from 'elysia'
 
 export const AuthModel = {
-	signInBody: t.Object({
-		username: t.String(),
+	signUpSchema: t.Object({
+		email: t.String(),
 		password: t.String(),
 	}),
-	signInResponse: t.Object({
-		username: t.String(),
-		token: t.String(),
+	signUpResponseSchema: t.Object({
+		id: t.String(),
+		status: t.Number()
 	}),
-	signInInvalid: t.Literal('Invalid username or password')
+	signUpInvalidSchema: t.Object({
+		message: t.Literal('Error while signing up')
+	}),
+    signInSchema: t.Object({
+        email: t.String(),
+        password: t.String()
+    }),
+    signInResponseSchema: t.Object({
+        message:t.Literal("SignIn successful"),
+    }),
+    signInFailedSchema: t.Object({
+        message: t.Literal("Invalid credentials")
+    })
 } as const
 
-// Optional, cast all model to TypeScript type
 export type AuthModel = {
 	[k in keyof typeof AuthModel]: UnwrapSchema<typeof AuthModel[k]>
 }
