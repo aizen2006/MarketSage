@@ -1,8 +1,13 @@
 {
   "name": "agents",
-  "module": "index.ts",
+  "module": "./triage_agent.ts",
   "type": "module",
   "private": true,
+  "exports": {
+    "./triage_agent": "./triage_agent.ts",
+    "./quick_agent": "./quick_agent.ts",
+    "./deep_agent": "./deep_agent.ts"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },
