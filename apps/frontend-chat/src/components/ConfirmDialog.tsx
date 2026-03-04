@@ -1,6 +1,5 @@
 "use client";
 
-import { ReactNode } from "react";
 import { motion } from "motion/react";
 
 interface ConfirmDialogProps {
@@ -26,7 +25,7 @@ export function ConfirmDialog({
 
   return (
     <div
-      className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 p-4\"
+      className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 p-4"
       role="dialog"
       aria-modal="true"
     >

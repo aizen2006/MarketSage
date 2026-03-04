@@ -5,6 +5,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./primitives/*": "./src/primitives/*.tsx",
+    "./overlays/*": "./src/overlays/*.tsx",
     "./chat/*": "./src/chat/*.tsx",
     "./theme/*": "./src/theme/*.tsx",
     "./motion/*": "./src/motion/*.ts"
@@ -26,5 +27,13 @@
   "dependencies": {
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
+  },
+  "peerDependencies": {
+    "motion": ">=12.0.0"
+  },
+  "peerDependenciesMeta": {
+    "motion": {
+      "optional": true
+    }
   }
 }

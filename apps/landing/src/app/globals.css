@@ -1,8 +1,7 @@
 @import "tailwindcss";
 
 /*
-  Shared MarketSage design tokens (light/dark) for docs.
-  Mirrors the frontend-chat and landing apps for visual consistency.
+  Shared MarketSage design tokens (light/dark) reused from frontend-chat.
 */
 
 :root {
@@ -93,3 +92,4 @@ body {
   background-color: var(--accent-soft);
   color: var(--accent-strong);
 }
+

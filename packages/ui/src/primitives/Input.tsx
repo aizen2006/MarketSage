@@ -10,7 +10,7 @@ export interface InputProps
 }
 
 export function Input({ label, error, className = "", id, ...props }: InputProps) {
-  const inputId = id ?? (typeof label === "string" ? label.toLowerCase() : undefined);
+  const inputId = id ?? (typeof label === "string" ? label.toLowerCase().replace(/\s+/g, "-") : undefined);
   return (
     <div className="flex flex-col gap-1">
       {label && (

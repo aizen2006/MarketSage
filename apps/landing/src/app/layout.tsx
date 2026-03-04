@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@repo/ui";
-import { DocsShell } from "../components/DocsShell";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -11,9 +10,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "MarketSage API Docs",
+  title: "MarketSage — AI Finance Agent & API",
   description:
-    "Documentation for the MarketSage finance agent API: Quick, Deep, and Auto modes.",
+    "Modern AI finance agent chat and API for research, risk analysis, and portfolio intelligence.",
 };
 
 export default function RootLayout({
@@ -27,9 +26,10 @@ export default function RootLayout({
         className={`${inter.variable} font-sans min-h-screen bg-bg text-fg antialiased`}
       >
         <ThemeProvider storageKey="marketsage-theme">
-          <DocsShell>{children}</DocsShell>
+          {children}
         </ThemeProvider>
       </body>
     </html>
   );
 }
+
