@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+MarketSage is a modern, minimal finance-agent chat interface built on Next.js, Tailwind CSS, and motion.dev. It provides a sleek, ChatGPT-style experience with light/dark themes, a protected chat route, and mock APIs for auth and chat responses.
 
-## Getting Started
+## Tech stack
 
-First, run the development server:
+- Next.js App Router
+- React + TypeScript
+- Tailwind CSS v4
+- motion.dev for micro-interactions
+- Jest + React Testing Library for unit tests
+
+## Getting started
+
+Install dependencies (from the repo root or this app directory):
+
+```bash
+npm install
+```
+
+Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open `http://localhost:3000` in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Routes
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `/signin` – sign-in form with floating labels, remember-me, and social buttons (visual only).
+- `/signup` – sign-up form with the same styling.
+- `/chat` – protected chat UI; unauthenticated users are redirected to `/signin`.
 
-## Learn More
+## Architecture
 
-To learn more about Next.js, take a look at the following resources:
+- `src/app/layout.tsx` – wraps the app in `ThemeProvider` and `AuthProvider`.
+- `src/context/ThemeContext.tsx` – manages light/dark mode and persists to `localStorage`.
+- `src/context/AuthContext.tsx` – simple mock auth using `lib/mockApi.ts` and `localStorage`.
+- `src/hooks/useChatState.ts` – conversation and message state, optimistic sending, persistence.
+- `src/lib/mockApi.ts` – mock auth and chat endpoints.
+- `src/lib/motion.ts` – shared motion.dev animation presets.
+- `src/components` – UI components: `Sidebar`, `Header`, `ChatWindow`, `Composer`, `MessageBubble`, `ThemeToggle`, `AuthForm`, etc.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Testing
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Run unit tests:
 
-## Deploy on Vercel
+```bash
+bun run test
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Example tests live under `src/components/__tests__/` and cover the `Composer` and `Sidebar` components.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Theming & motion
+
+Color tokens and motion guidelines are documented in `DESIGN_NOTES.md`. Theme colors are implemented as CSS variables in `src/app/globals.css` and referenced from Tailwind via the custom `tailwind.config.ts`.

@@ -70,5 +70,19 @@ export const app = new Elysia({ prefix: "/user" })
 				200: UserModel.getTransactionsResponseSchema,
 			},
 		},
+	)
+	.get(
+		"/conversations",
+		async ({ status, userId }) => {
+			const conversations = await UserService.getConversations(String(userId));
+			return status(200, {
+				conversations,
+			});
+		},
+		{
+			response: {
+				200: UserModel.getConversationsResponseSchema,
+			},
+		},
 	);
 

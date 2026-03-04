@@ -28,6 +28,17 @@ export const UserModel = {
 			}),
 		),
 	}),
+	getConversationsResponseSchema: t.Object({
+		conversations: t.Array(
+			t.Object({
+				id: t.String(),
+				title: t.String(),
+				lastMessagePreview: t.String(),
+				updatedAt: t.String(),
+				unreadCount: t.Number(),
+			}),
+		),
+	}),
 } as const;
 
 export type UserModel = {
