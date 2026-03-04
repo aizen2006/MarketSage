@@ -4,8 +4,8 @@ import { useMemo, useState } from "react";
 import { motion } from "motion/react";
 import type { Conversation } from "../types/chat";
 import { ConversationItem } from "./ConversationItem";
-import { buttonTap } from "../lib/motion";
 import { ConfirmDialog } from "./ConfirmDialog";
+import { Button, IconButton } from "@repo/ui";
 
 interface SidebarProps {
   conversations: Conversation[];
@@ -40,48 +40,49 @@ export function Sidebar({
 
   return (
     <>
-      <aside className="flex h-full w-full flex-col border-r border-subtle bg-bg-subtle/60 px-3 py-3 md:max-w-xs">
-        <div className="flex items-center justify-between gap-2 pb-3">
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-2xl bg-accent-soft text-xs font-semibold text-accent-strong shadow-soft">
+      <aside className="flex h-full w-full flex-col bg-bg border-r border-border-subtle px-3 py-4 md:max-w-[280px]">
+        {/* Header Logo & New Chat */}
+        <div className="flex items-center justify-between mb-6 px-1">
+          <div className="flex items-center gap-3">
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-fg text-xs font-bold text-bg shadow-sm">
               FA
             </div>
-            <div className="leading-tight">
-              <div className="text-xs font-semibold text-fg">FinanceAI</div>
-              <div className="text-[0.7rem] text-fg-soft">
-                Enterprise v2.0 • Chat
-              </div>
+            <div className="flex flex-col">
+              <span className="text-[13px] font-semibold tracking-tight text-fg leading-none">
+                FinanceAI
+              </span>
+              <span className="text-[11px] text-fg-soft mt-0.5">
+                Enterprise
+              </span>
             </div>
           </div>
-          <motion.button
-            type="button"
-            className="hidden h-7 items-center justify-center rounded-xl border border-subtle bg-bg-elevated px-2 text-[0.7rem] text-fg-soft hover:text-fg md:inline-flex"
-            aria-label="New conversation"
+          <IconButton
+            variant="ghost"
+            size="sm"
             onClick={onCreateConversation}
-            {...buttonTap}
+            aria-label="New conversation"
+            title="New Chat"
           >
-            +
-          </motion.button>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+          </IconButton>
         </div>
 
-        <div className="mb-3">
-          <label className="sr-only" htmlFor="conversation-search">
-            Search conversations
-          </label>
-          <input
-            id="conversation-search"
-            type="search"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search conversations..."
-            className="h-8 w-full rounded-xl border border-subtle bg-bg-elevated px-3 text-[0.75rem] text-fg placeholder:text-fg-soft focus:border-accent focus:outline-none"
-          />
+        {/* Search */}
+        <div className="mb-4 px-1">
+          <div className="relative">
+            <svg className="absolute left-2.5 top-1/2 -translate-y-1/2 text-fg-soft" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search..."
+              className="h-8 w-full rounded-md border border-transparent bg-bg-elevated pl-8 pr-3 text-[13px] text-fg placeholder:text-fg-soft transition-all focus:border-border-strong focus:bg-bg focus:outline-none focus:ring-1 focus:ring-border-strong"
+            />
+          </div>
         </div>
 
-        <div
-          className="flex-1 space-y-2 overflow-y-auto pb-2"
-          aria-label="Conversation list"
-        >
+        {/* Conversation List */}
+        <div className="flex-1 overflow-y-auto space-y-0.5 pr-1 scrollbar-hide">
           {filtered.map((conv) => (
             <ConversationItem
               key={conv.id}
@@ -101,42 +102,29 @@ export function Sidebar({
             />
           ))}
           {filtered.length === 0 && (
-            <p className="px-1 text-[0.72rem] text-fg-soft">
+            <p className="px-2 py-4 text-center text-[12px] text-fg-soft">
               No conversations match "{query}".
             </p>
           )}
         </div>
 
-        <div className="mt-2 flex items-center justify-between gap-2 pt-2 text-[0.75rem]">
-          <motion.button
-            type="button"
-            className="flex h-8 w-full items-center justify-center rounded-xl border border-dashed border-subtle bg-bg-elevated text-xs font-medium text-fg-soft hover:border-accent hover:text-fg"
-            onClick={onCreateConversation}
-            {...buttonTap}
-          >
-            <span className="mr-1 text-base leading-none">+</span>
-            New conversation
-          </motion.button>
-        </div>
-
-        <div className="mt-3 flex items-center justify-between rounded-xl bg-bg-elevated px-2 py-2 text-[0.75rem] text-fg-soft">
-          <div className="flex items-center gap-2">
-            <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-accent-soft text-[0.7rem] font-semibold text-accent-strong">
-              AT
-            </span>
-            <div className="leading-tight">
-              <div className="text-[0.8rem] font-medium text-fg">
-                Alex Thompson
+        {/* Footer User Profile */}
+        <div className="mt-auto pt-4 px-1">
+          <button className="flex w-full items-center justify-between rounded-lg p-2 transition-colors hover:bg-bg-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-strong">
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-accent text-[10px] font-bold text-fg-inverse">
+                AT
               </div>
-              <div className="text-[0.7rem] text-fg-soft">Premium member</div>
+              <div className="flex flex-col text-left">
+                <span className="text-[13px] font-medium leading-none text-fg">
+                  Alex Thompson
+                </span>
+                <span className="text-[11px] text-fg-soft mt-0.5">
+                  Pro Plan
+                </span>
+              </div>
             </div>
-          </div>
-          <button
-            type="button"
-            className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-subtle text-[0.75rem] text-fg-soft hover:text-fg"
-            aria-label="User settings"
-          >
-            ⚙
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-fg-soft"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
           </button>
         </div>
       </aside>
@@ -156,4 +144,3 @@ export function Sidebar({
     </>
   );
 }
-

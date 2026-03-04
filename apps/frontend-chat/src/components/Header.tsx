@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion } from "motion/react";
 import { ThemeToggle } from "./ThemeToggle";
-import { buttonTap } from "../lib/motion";
+import { IconButton } from "@repo/ui";
 
 const MODES = ["Analysis", "Trader", "Planner"] as const;
 
@@ -12,18 +12,20 @@ export function Header({ onToggleSidebar }: { onToggleSidebar?: () => void }) {
     useState<(typeof MODES)[number]>("Analysis");
 
   return (
-    <header className="flex items-center justify-between gap-3 border-b border-subtle bg-bg-elevated/60 px-3 py-2 md:px-5 md:py-3">
-      <div className="flex items-center gap-2 md:gap-3">
-        <button
-          type="button"
-          className="inline-flex h-8 w-8 items-center justify-center rounded-xl border border-subtle text-sm text-fg-soft hover:text-fg md:hidden"
+    <header className="flex h-14 items-center justify-between gap-3 border-b border-border-subtle bg-bg/80 backdrop-blur-md px-4 md:px-6">
+      <div className="flex items-center gap-3">
+        <IconButton
+          variant="ghost"
+          size="sm"
+          className="md:hidden"
           onClick={onToggleSidebar}
           aria-label="Toggle sidebar"
         >
-          ☰
-        </button>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+        </IconButton>
+        
         <nav
-          className="relative flex items-center gap-1 rounded-full bg-bg-subtle px-1 py-1 text-[0.75rem]"
+          className="relative flex items-center p-1 rounded-lg bg-bg-elevated border border-border-subtle shadow-sm"
           role="tablist"
           aria-label="Mode"
         >
@@ -36,7 +38,7 @@ export function Header({ onToggleSidebar }: { onToggleSidebar?: () => void }) {
                 role="tab"
                 aria-selected={isActive}
                 onClick={() => setActiveMode(mode)}
-                className={`relative z-10 rounded-full px-2.5 py-1 transition ${
+                className={`relative z-10 rounded-md px-3 py-1 text-[13px] font-medium transition-colors ${
                   isActive
                     ? "text-fg"
                     : "text-fg-soft hover:text-fg-muted"
@@ -48,37 +50,28 @@ export function Header({ onToggleSidebar }: { onToggleSidebar?: () => void }) {
           })}
           <motion.span
             layout
-            className="absolute inset-y-1 rounded-full bg-bg-elevated shadow-soft"
+            className="absolute inset-y-1 rounded-md bg-bg shadow-[0_1px_3px_rgba(0,0,0,0.1)] dark:shadow-[0_1px_3px_rgba(255,255,255,0.05)] border border-border-subtle"
             style={{
-              width: "33.3333%",
+              width: "calc(33.3333% - 2.6px)",
               left:
                 activeMode === "Analysis"
-                  ? "0%"
+                  ? "4px"
                   : activeMode === "Trader"
-                    ? "33.3333%"
-                    : "66.6666%",
+                    ? "calc(33.3333% + 1.3px)"
+                    : "calc(66.6666% - 1.3px)",
             }}
             transition={{
               type: "spring",
-              stiffness: 320,
-              damping: 26,
+              stiffness: 400,
+              damping: 30,
             }}
           />
         </nav>
       </div>
 
-      <div className="flex items-center gap-2 md:gap-3">
+      <div className="flex items-center gap-2">
         <ThemeToggle />
-        <motion.button
-          type="button"
-          className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-subtle bg-bg-elevated text-xs text-fg-soft hover:text-fg"
-          aria-label="Chat settings"
-          {...buttonTap}
-        >
-          ⚙
-        </motion.button>
       </div>
     </header>
   );
 }
-

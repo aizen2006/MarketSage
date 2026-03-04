@@ -1,48 +1,52 @@
 @import "tailwindcss";
 
 /*
-  Shared MarketSage design tokens (light/dark) for docs.
-  Mirrors the frontend-chat and landing apps for visual consistency.
+  Global design tokens for light/dark themes.
+  Premium minimal aesthetic (Vercel/Linear style).
 */
 
 :root {
-  --bg: #f8fafc;
-  --bg-elevated: #ffffff;
-  --bg-subtle: #e5edf7;
-  --border-subtle: #e2e8f0;
-  --border-strong: #0f172a0d;
+  /* Light theme palette */
+  --bg: #ffffff;
+  --bg-elevated: #fafafa;
+  --bg-subtle: #f5f5f5;
+  --border-subtle: #eaeaea;
+  --border-strong: #888888;
 
-  --fg: #0f172a;
-  --fg-muted: #64748b;
-  --fg-soft: #94a3b8;
+  --fg: #000000;
+  --fg-muted: #666666;
+  --fg-soft: #888888;
+  --fg-inverse: #ffffff;
 
-  --accent: #06b6d4;
-  --accent-soft: #ecfeff;
-  --accent-strong: #0e7490;
+  --accent: #000000;
+  --accent-soft: #f5f5f5;
+  --accent-strong: #333333;
 
-  --danger: #ef4444;
+  --danger: #e00000;
 
-  --shadow-soft: 0 18px 45px rgba(15, 23, 42, 0.12);
+  --shadow-soft: 0 4px 24px rgba(0, 0, 0, 0.04);
 }
 
 .dark {
-  --bg: #0b1220;
-  --bg-elevated: #0f1724;
-  --bg-subtle: #020617;
-  --border-subtle: #1f2937;
-  --border-strong: #1e293b;
+  /* Dark theme palette */
+  --bg: #000000;
+  --bg-elevated: #0a0a0a;
+  --bg-subtle: #111111;
+  --border-subtle: #222222;
+  --border-strong: #444444;
 
-  --fg: #e6eef8;
-  --fg-muted: #9ca3af;
-  --fg-soft: #6b7280;
+  --fg: #ffffff;
+  --fg-muted: #888888;
+  --fg-soft: #666666;
+  --fg-inverse: #000000;
 
-  --accent: #06b6d4;
-  --accent-soft: #022c38;
-  --accent-strong: #22d3ee;
+  --accent: #ffffff;
+  --accent-soft: #1a1a1a;
+  --accent-strong: #cccccc;
 
-  --danger: #f97373;
+  --danger: #ff3333;
 
-  --shadow-soft: 0 18px 45px rgba(15, 23, 42, 0.6);
+  --shadow-soft: 0 8px 32px rgba(255, 255, 255, 0.03);
 }
 
 @theme inline {
@@ -55,6 +59,7 @@
   --color-fg: var(--fg);
   --color-fg-muted: var(--fg-muted);
   --color-fg-soft: var(--fg-soft);
+  --color-fg-inverse: var(--fg-inverse);
 
   --color-accent: var(--accent);
   --color-accent-soft: var(--accent-soft);
@@ -85,11 +90,11 @@ body {
 }
 
 :focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
+  outline: 2px solid var(--border-strong);
+  outline-offset: 2px;
 }
 
 ::selection {
-  background-color: var(--accent-soft);
-  color: var(--accent-strong);
+  background-color: var(--fg);
+  color: var(--bg);
 }

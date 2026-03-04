@@ -11,39 +11,38 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="mt-10 border-t border-border-subtle/80 bg-bg-subtle/40 py-6 text-xs text-fg-soft sm:text-sm">
-      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-6 sm:flex-row">
-        <div className="flex items-center gap-2">
-          <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-accent-soft text-[11px] font-semibold text-accent-strong">
-            MS
+    <footer className="border-t border-border-subtle bg-bg py-12 md:py-16">
+      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 px-6 md:flex-row lg:px-8">
+        <div className="flex items-center gap-3 text-fg">
+          <div className="flex h-6 w-6 items-center justify-center rounded bg-fg text-[9px] font-bold text-bg">
+            FA
           </div>
-          <span>© {year} MarketSage. All rights reserved.</span>
+          <span className="text-[13px] font-semibold tracking-tight">MarketSage © {year}</span>
         </div>
 
-        <nav className="flex items-center gap-4">
+        <nav className="flex items-center gap-6">
           <a
             href={CHAT_URL}
-            className="transition-colors hover:text-fg"
+            className="text-[13px] text-fg-muted transition-colors hover:text-fg"
           >
-            Chat
+            Chat App
           </a>
           <a
             href={DOCS_URL}
-            className="transition-colors hover:text-fg"
+            className="text-[13px] text-fg-muted transition-colors hover:text-fg"
           >
-            API Docs
+            API Documentation
           </a>
           <a
             href={LANDING_GITHUB_URL}
-            className="transition-colors hover:text-fg"
+            className="text-[13px] text-fg-muted transition-colors hover:text-fg"
             target="_blank"
             rel="noreferrer"
           >
-            GitHub
+            GitHub Source
           </a>
         </nav>
       </div>
     </footer>
   );
 }
-

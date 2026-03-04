@@ -4,6 +4,7 @@ import { useState, useEffect, FormEvent } from "react";
 import Link from "next/link";
 import { motion } from "motion/react";
 import { useAuth } from "../context/AuthContext";
+import { Input, Button } from "@repo/ui";
 
 type Mode = "signin" | "signup";
 
@@ -16,7 +17,6 @@ export function AuthForm({ mode }: AuthFormProps) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [remember, setRemember] = useState(true);
   const [localError, setLocalError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -32,208 +32,162 @@ export function AuthForm({ mode }: AuthFormProps) {
     setLocalError(null);
 
     if (mode === "signin") {
-      await signin({ email, password, remember });
+      await signin({ email, password, remember: true });
     } else {
-      await signup({ name, email, password, remember });
+      await signup({ name, email, password, remember: true });
     }
   }
 
-  const title = mode === "signin" ? "Welcome back" : "Create your account";
+  const title = mode === "signin" ? "Log in to MarketSage" : "Create your account";
   const subtitle =
     mode === "signin"
-      ? "Sign in to continue your portfolio analysis."
-      : "Sign up to start chatting with your finance agent.";
+      ? "Welcome back. Enter your details to continue."
+      : "Start chatting with your finance agent today.";
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-bg">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-bg px-4">
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.25 }}
-        className="w-full max-w-md rounded-2xl border border-subtle bg-bg-elevated p-8 shadow-soft"
+        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+        className="w-full max-w-[400px]"
         aria-labelledby="auth-title"
       >
-        <div className="mb-6 flex items-center justify-between">
-          <div>
-            <h1
-              id="auth-title"
-              className="text-xl font-semibold text-fg tracking-tight"
-            >
-              {title}
-            </h1>
-            <p className="mt-1 text-sm text-fg-muted">{subtitle}</p>
+        <div className="mb-8 flex flex-col items-center text-center">
+          <div className="mb-6 flex h-10 w-10 items-center justify-center rounded-xl bg-fg text-sm font-bold text-bg shadow-sm">
+            FA
           </div>
-          <div className="inline-flex items-center gap-2 rounded-full bg-bg-subtle px-3 py-1 text-xs text-fg-soft">
-            <span className="inline-block h-6 w-6 rounded-full bg-accent-soft" />
-            <span>FinanceAI</span>
+          <h1
+            id="auth-title"
+            className="text-2xl font-semibold tracking-tight text-fg"
+          >
+            {title}
+          </h1>
+          <p className="mt-2 text-[15px] text-fg-soft">{subtitle}</p>
+        </div>
+
+        <div className="rounded-2xl border border-border-subtle bg-bg-elevated p-8 shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgba(255,255,255,0.02)]">
+          <form className="flex flex-col gap-4" onSubmit={handleSubmit} noValidate>
+            {mode === "signup" && (
+              <Input
+                id="name"
+                label="Full name"
+                type="text"
+                autoComplete="name"
+                placeholder="John Doe"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            )}
+
+            <Input
+              id="email"
+              label="Email address"
+              type="email"
+              autoComplete="email"
+              placeholder="john@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+
+            <div className="relative">
+              <Input
+                id="password"
+                label={
+                  <div className="flex w-full items-center justify-between">
+                    <span>Password</span>
+                    {mode === "signin" && (
+                      <button
+                        type="button"
+                        className="text-[13px] font-medium text-fg-muted hover:text-fg transition-colors"
+                      >
+                        Forgot password?
+                      </button>
+                    )}
+                  </div>
+                }
+                type="password"
+                autoComplete={
+                  mode === "signin" ? "current-password" : "new-password"
+                }
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+
+            {(localError || error) && (
+              <div
+                role="alert"
+                className="mt-2 rounded-lg border border-danger/20 bg-danger/5 px-3 py-2 text-[13px] text-danger"
+              >
+                {localError || error}
+              </div>
+            )}
+
+            <Button
+              type="submit"
+              size="lg"
+              className="mt-2 w-full text-[15px]"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <span className="inline-flex items-center gap-2">
+                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-bg/30 border-t-bg" />
+                  <span>Please wait...</span>
+                </span>
+              ) : (
+                <span>{mode === "signin" ? "Log in" : "Sign up"}</span>
+              )}
+            </Button>
+          </form>
+
+          <div className="relative my-6 text-center text-[13px]">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-border-subtle" />
+            </div>
+            <span className="relative bg-bg-elevated px-4 text-fg-soft">
+              or continue with
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            {["Google", "GitHub"].map((provider) => (
+              <Button
+                key={provider}
+                type="button"
+                variant="outline"
+                className="w-full text-[13px]"
+              >
+                {provider}
+              </Button>
+            ))}
           </div>
         </div>
 
-        <form className="space-y-5" onSubmit={handleSubmit} noValidate>
-          {mode === "signup" && (
-            <FloatingInput
-              id="name"
-              label="Full name"
-              type="text"
-              autoComplete="name"
-              value={name}
-              onChange={setName}
-            />
-          )}
-
-          <FloatingInput
-            id="email"
-            label="Email"
-            type="email"
-            autoComplete="email"
-            value={email}
-            onChange={setEmail}
-          />
-
-          <FloatingInput
-            id="password"
-            label="Password"
-            type="password"
-            autoComplete={
-              mode === "signin" ? "current-password" : "new-password"
-            }
-            value={password}
-            onChange={setPassword}
-          />
-
-          <div className="flex items-center justify-between text-sm">
-            <label className="inline-flex items-center gap-2">
-              <input
-                type="checkbox"
-                className="h-4 w-4 rounded border-subtle bg-bg-subtle text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-                checked={remember}
-                onChange={(e) => setRemember(e.target.checked)}
-              />
-              <span className="text-fg-muted">Remember me on this device</span>
-            </label>
-            {mode === "signin" && (
-              <button
-                type="button"
-                className="text-xs font-medium text-accent hover:text-accent-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
+        <p className="mt-8 text-center text-[14px] text-fg-soft">
+          {mode === "signin" ? (
+            <>
+              Don't have an account?{" "}
+              <Link
+                href="/signup"
+                className="font-medium text-fg hover:underline transition-colors"
               >
-                Forgot?
-              </button>
-            )}
-          </div>
-
-          {(localError || error) && (
-            <div
-              role="alert"
-              className="rounded-xl border border-danger/30 bg-danger/10 px-3 py-2 text-xs text-danger"
-            >
-              {localError || error}
-            </div>
-          )}
-
-          <motion.button
-            type="submit"
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-sm font-medium text-white shadow-soft transition hover:bg-accent-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg active:shadow-none"
-            whileTap={{ scale: 0.98 }}
-            aria-busy={isLoading}
-          >
-            {isLoading ? (
-              <span className="inline-flex items-center gap-2">
-                <span className="h-3 w-3 animate-spin rounded-full border-2 border-accent-soft border-t-white" />
-                <span>Signing {mode === "signin" ? "in" : "up"}…</span>
-              </span>
-            ) : (
-              <span>{mode === "signin" ? "Sign in" : "Create account"}</span>
-            )}
-          </motion.button>
-
-          <div className="relative py-2 text-center text-xs text-fg-soft">
-            <span className="px-2">or continue with</span>
-          </div>
-
-          <div className="grid grid-cols-3 gap-3 text-xs">
-            {["Google", "Apple", "Microsoft"].map((provider) => (
-              <button
-                key={provider}
-                type="button"
-                className="flex items-center justify-center gap-1 rounded-xl border border-subtle bg-bg-subtle px-2 py-2 text-fg-muted shadow-sm transition hover:border-accent/50 hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
+                Sign up
+              </Link>
+            </>
+          ) : (
+            <>
+              Already have an account?{" "}
+              <Link
+                href="/signin"
+                className="font-medium text-fg hover:underline transition-colors"
               >
-                <span className="h-4 w-4 rounded-full bg-bg-elevated" />
-                <span>{provider}</span>
-              </button>
-            ))}
-          </div>
-
-          <p className="text-center text-xs text-fg-soft">
-            {mode === "signin" ? (
-              <>
-                New here?{" "}
-                <Link
-                  href="/signup"
-                  className="font-medium text-accent hover:text-accent-strong"
-                >
-                  Create an account
-                </Link>
-              </>
-            ) : (
-              <>
-                Already have an account?{" "}
-                <Link
-                  href="/signin"
-                  className="font-medium text-accent hover:text-accent-strong"
-                >
-                  Sign in
-                </Link>
-              </>
-            )}
-          </p>
-        </form>
+                Log in
+              </Link>
+            </>
+          )}
+        </p>
       </motion.div>
     </div>
   );
 }
-
-interface FloatingInputProps {
-  id: string;
-  label: string;
-  type: string;
-  autoComplete?: string;
-  value: string;
-  onChange: (value: string) => void;
-}
-
-function FloatingInput({
-  id,
-  label,
-  type,
-  autoComplete,
-  value,
-  onChange,
-}: FloatingInputProps) {
-  const hasValue = value.length > 0;
-
-  return (
-    <div className="relative">
-      <input
-        id={id}
-        type={type}
-        autoComplete={autoComplete}
-        className="peer h-11 w-full rounded-xl border border-subtle bg-bg-subtle px-3 pt-5 text-sm text-fg shadow-inner outline-none transition focus:border-accent focus:bg-bg-elevated peer-not-placeholder-shown:text-xs"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        aria-label={label}
-      />
-      <label
-        htmlFor={id}
-        className="pointer-events-none absolute left-3 top-1.5 text-xs text-fg-soft transition-all peer-focus:text-accent peer-focus:brightness-110"
-      >
-        {label}
-      </label>
-      {!hasValue && (
-        <span className="sr-only">
-          {label} input. This field is required to continue.
-        </span>
-      )}
-    </div>
-  );
-}
-

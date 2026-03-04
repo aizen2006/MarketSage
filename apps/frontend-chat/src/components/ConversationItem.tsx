@@ -26,65 +26,54 @@ export function ConversationItem({
   return (
     <motion.button
       type="button"
-      className={`group flex w-full items-start gap-3 rounded-xl border px-3 py-2 text-left text-xs transition ${
+      className={`group relative flex w-full flex-col gap-1 rounded-lg px-3 py-2.5 text-left transition-colors duration-200 ${
         isActive
-          ? "border-accent bg-accent-soft text-fg"
-          : "border-subtle bg-bg-elevated hover:border-accent/60"
-      } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg`}
+          ? "bg-bg-elevated text-fg"
+          : "text-fg-muted hover:bg-bg-elevated hover:text-fg"
+      } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-strong`}
       onClick={onClick}
       aria-current={isActive ? "page" : undefined}
       {...buttonTap}
     >
-      <div className="mt-1 h-2 w-2 rounded-full bg-accent" aria-hidden="true" />
-      <div className="flex-1 space-y-0.5">
-        <div className="flex items-center justify-between gap-2">
-          <span className="truncate text-[0.78rem] font-medium">
-            {conversation.title}
-          </span>
-          <span className="shrink-0 text-[0.7rem] text-fg-soft">
-            {timeLabel}
-          </span>
-        </div>
-        <p className="line-clamp-2 text-[0.72rem] text-fg-muted">
-          {conversation.lastMessagePreview}
-        </p>
+      <div className="flex items-center justify-between gap-2 w-full">
+        <span className="truncate text-[13px] font-medium tracking-tight">
+          {conversation.title}
+        </span>
+        <span className="shrink-0 text-[11px] text-fg-soft font-mono">
+          {timeLabel}
+        </span>
       </div>
-      <div className="flex flex-col items-end gap-1">
-        {conversation.unreadCount > 0 && (
-          <motion.span
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="inline-flex min-w-[1.4rem] justify-center rounded-full bg-accent text-[0.65rem] font-semibold text-white"
-          >
-            {conversation.unreadCount}
-          </motion.span>
-        )}
-        <div className="flex gap-1 opacity-0 transition group-hover:opacity-100">
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onRename();
-            }}
-            className="rounded-full bg-bg-subtle px-1.5 py-0.5 text-[0.65rem] text-fg-soft hover:text-fg"
-            aria-label="Rename conversation"
-          >
-            Rename
-          </button>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onDelete();
-            }}
-            className="rounded-full bg-bg-subtle px-1.5 py-0.5 text-[0.65rem] text-danger hover:bg-danger/10"
-            aria-label="Delete conversation"
-          >
-            Del
-          </button>
-        </div>
+      <p className="line-clamp-1 w-11/12 text-[12px] text-fg-soft">
+        {conversation.lastMessagePreview}
+      </p>
+
+      {/* Hover actions */}
+      <div className="absolute right-2 top-2 hidden items-center gap-1 group-hover:flex">
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onRename();
+          }}
+          className="flex h-6 w-6 items-center justify-center rounded-md bg-bg-subtle text-fg-soft hover:bg-bg-elevated hover:text-fg shadow-sm border border-border-subtle"
+          aria-label="Rename conversation"
+          title="Rename"
+        >
+          ✎
+        </button>
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete();
+          }}
+          className="flex h-6 w-6 items-center justify-center rounded-md bg-bg-subtle text-danger hover:bg-danger/10 shadow-sm border border-border-subtle"
+          aria-label="Delete conversation"
+          title="Delete"
+        >
+          ✕
+        </button>
       </div>
     </motion.button>
   );
 }
-

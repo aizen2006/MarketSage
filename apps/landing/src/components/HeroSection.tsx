@@ -18,73 +18,68 @@ const codeLines = [
 
 export function HeroSection() {
   return (
-    <section className="relative overflow-hidden pb-20 pt-10 sm:pb-32 sm:pt-16">
-      <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_rgba(34,211,238,0.18),_transparent_55%),radial-gradient(circle_at_bottom,_rgba(15,23,42,0.85),_transparent_60%)]" />
+    <section className="relative overflow-hidden pb-24 pt-20 sm:pb-32 sm:pt-28">
+      {/* Subtle grid background */}
+      <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
 
-      <div className="mx-auto flex max-w-6xl flex-col items-center gap-12 px-4 sm:px-6 lg:flex-row lg:items-start lg:gap-16">
-        <div className="max-w-xl text-center lg:text-left">
-          <motion.h1
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.35, ease: [0.21, 0.47, 0.32, 0.98] }}
-            className="text-balance text-4xl font-semibold tracking-tight text-fg sm:text-5xl lg:text-6xl"
-          >
-            Modern financial intelligence,
-            <span className="text-accent"> on tap.</span>
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.08, duration: 0.3 }}
-            className="mt-4 text-balance text-base text-fg-muted sm:text-lg"
-          >
-            MarketSage gives you an AI finance agent and production-ready API
-            for earnings summaries, risk analysis, scenario planning, and more
-            — powered by Quick, Deep, and Auto modes.
-          </motion.p>
-
+      <div className="mx-auto flex max-w-6xl flex-col items-center gap-16 px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
+        <div className="max-w-2xl text-center lg:text-left lg:w-1/2">
           <motion.div
-            initial={{ opacity: 0, y: 8 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.14, duration: 0.3 }}
-            className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-start"
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
           >
-            <Button asChild size="lg">
-              <Link href={CHAT_URL}>Open Chat</Link>
-            </Button>
-            <Button asChild variant="outline" size="lg">
-              <Link href={DOCS_URL}>API Documentation</Link>
-            </Button>
+            <div className="inline-flex items-center gap-2 rounded-full border border-border-strong bg-bg-subtle px-3 py-1 text-[13px] font-medium text-fg mb-6 shadow-sm">
+              <span className="flex h-2 w-2 rounded-full bg-accent animate-pulse" />
+              v2.0 is now live
+            </div>
+            <h1 className="text-balance text-5xl font-semibold tracking-tighter text-fg sm:text-6xl lg:text-7xl leading-[1.1]">
+              Financial intelligence, <span className="text-fg-soft">on tap.</span>
+            </h1>
           </motion.div>
 
           <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2, duration: 0.25 }}
-            className="mt-4 text-xs text-fg-soft"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-6 text-balance text-[17px] leading-relaxed text-fg-muted sm:text-lg"
           >
-            1 credit per call. Built-in billing, API keys, and usage tracking.
+            MarketSage gives you an AI finance agent and production-ready API
+            for earnings summaries, risk analysis, and scenario planning. Built for modern teams.
           </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center lg:justify-start"
+          >
+            <Button asChild size="lg" className="w-full sm:w-auto h-12 px-8 text-[15px]">
+              <Link href={CHAT_URL}>Open Chat</Link>
+            </Button>
+            <Button asChild variant="outline" size="lg" className="w-full sm:w-auto h-12 px-8 text-[15px]">
+              <Link href={DOCS_URL}>Read Docs</Link>
+            </Button>
+          </motion.div>
         </div>
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.12, duration: 0.35 }}
-          className="w-full max-w-md lg:max-w-lg"
+          initial={{ opacity: 0, scale: 0.95, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          className="w-full max-w-[500px] lg:w-1/2"
         >
-          <Card className="relative overflow-hidden border border-border-strong bg-bg-elevated/90 shadow-soft">
-            <div className="flex items-center justify-between border-b border-border-subtle px-4 py-3">
-              <div className="flex items-center gap-1.5">
-                <span className="h-2 w-2 rounded-full bg-rose-400" />
-                <span className="h-2 w-2 rounded-full bg-amber-400" />
-                <span className="h-2 w-2 rounded-full bg-emerald-400" />
+          <Card className="relative overflow-hidden border border-border-subtle bg-bg-elevated p-0 shadow-xl">
+            <div className="flex h-10 items-center justify-between border-b border-border-subtle bg-bg px-4">
+              <div className="flex items-center gap-2">
+                <div className="h-2.5 w-2.5 rounded-full bg-border-strong" />
+                <div className="h-2.5 w-2.5 rounded-full bg-border-strong" />
+                <div className="h-2.5 w-2.5 rounded-full bg-border-strong" />
               </div>
-              <span className="text-xs text-fg-soft">marketsage@terminal</span>
+              <span className="text-[11px] font-medium text-fg-soft">bash</span>
             </div>
 
-            <div className="px-4 py-4 font-mono text-[11px] leading-relaxed text-fg-soft">
+            <div className="p-5 font-mono text-[13px] leading-loose text-fg-muted">
               <motion.pre
                 initial="hidden"
                 animate="visible"
@@ -92,7 +87,7 @@ export function HeroSection() {
                   hidden: { opacity: 1 },
                   visible: {
                     transition: {
-                      staggerChildren: 0.12,
+                      staggerChildren: 0.1,
                     },
                   },
                 }}
@@ -101,28 +96,28 @@ export function HeroSection() {
                   <motion.div
                     key={idx}
                     variants={{
-                      hidden: { opacity: 0 },
-                      visible: { opacity: 1 },
+                      hidden: { opacity: 0, x: -5 },
+                      visible: { opacity: 1, x: 0 },
                     }}
                   >
-                    <span className="select-none text-fg-soft/60">
-                      {idx === 0 ? "➜ " : "   "}
+                    <span className="select-none text-fg-soft/40 mr-3">
+                      {idx === 0 ? "❯" : " "}
                     </span>
-                    <span className="text-accent-soft">{line}</span>
+                    <span className="text-fg">{line}</span>
                   </motion.div>
                 ))}
               </motion.pre>
 
               <motion.div
-                initial={{ opacity: 0, y: 8 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.7, duration: 0.3 }}
-                className="mt-4 rounded-lg bg-bg-subtle/50 px-3 py-2"
+                transition={{ delay: 0.8, duration: 0.4 }}
+                className="mt-6 rounded-lg border border-border-subtle bg-bg p-4"
               >
-                <div className="text-[10px] uppercase tracking-wide text-accent-strong">
+                <div className="mb-2 text-[10px] font-bold uppercase tracking-wider text-fg-soft">
                   Response
                 </div>
-                <pre className="mt-1 text-[11px] text-fg-soft">
+                <pre className="text-fg leading-relaxed">
                   {`{\n  "mode": "quick",\n  "response": "AAPL beat on EPS and revenue, raised FY guidance, and expanded buybacks."\n}`}
                 </pre>
               </motion.div>
@@ -133,4 +128,3 @@ export function HeroSection() {
     </section>
   );
 }
-

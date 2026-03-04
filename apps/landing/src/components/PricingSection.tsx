@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "motion/react";
 import { Card, Button } from "@repo/ui";
 
 const DASHBOARD_URL =
@@ -7,51 +8,65 @@ const DASHBOARD_URL =
 
 export function PricingSection() {
   return (
-    <section id="pricing" className="py-12 sm:py-16">
-      <div className="mx-auto max-w-3xl text-center">
-        <h2 className="text-2xl font-semibold tracking-tight text-fg sm:text-3xl">
-          Simple, credit-based pricing.
+    <section id="pricing" className="py-20 sm:py-24 bg-bg">
+      <div className="mx-auto max-w-4xl px-6 lg:px-8 text-center">
+        <h2 className="text-3xl font-semibold tracking-tight text-fg sm:text-4xl">
+          Simple, transparent pricing.
         </h2>
-        <p className="mt-3 text-sm text-fg-muted sm:text-base">
+        <p className="mt-4 text-[17px] text-fg-muted">
           Start with generous free credits, then scale usage as you grow. No
           hidden tiers or complicated knobs.
         </p>
 
-        <Card className="mt-8 border border-border-subtle bg-bg-elevated/95 shadow-soft">
-          <div className="flex flex-col gap-6 px-6 py-6 sm:px-8 sm:py-8">
-            <div className="flex flex-col items-center gap-1 sm:flex-row sm:justify-between">
-              <div className="text-left">
-                <h3 className="text-sm font-semibold text-fg">
-                  1 credit per agent call
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <Card className="mt-12 overflow-hidden p-0 border border-border-strong bg-bg shadow-xl text-left">
+            <div className="flex flex-col md:flex-row">
+              <div className="flex-1 p-8 sm:p-10 border-b md:border-b-0 md:border-r border-border-subtle">
+                <h3 className="text-xl font-semibold tracking-tight text-fg">
+                  Pay as you go
                 </h3>
-                <p className="mt-1 text-xs text-fg-muted sm:text-sm">
+                <p className="mt-2 text-[15px] text-fg-muted leading-relaxed">
                   Same price for Quick, Deep, and Auto. Only pay for completed
-                  calls.
+                  calls. Usage & billing tracked per API key.
                 </p>
+                
+                <ul className="mt-8 space-y-4">
+                  {[
+                    "1 credit per agent call",
+                    "Onramp credits instantly via dashboard",
+                    "Per-user usage logs via the API",
+                  ].map((item, i) => (
+                    <li key={i} className="flex items-center gap-3 text-[14px] text-fg-muted">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-fg"><path d="M20 6 9 17l-5-5"/></svg>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <div className="mt-2 text-left sm:mt-0 sm:text-right">
-                <div className="text-xs text-fg-soft">Example bundle</div>
-                <div className="text-lg font-semibold text-fg">
-                  10,000 credits
+              
+              <div className="w-full md:w-72 bg-bg-elevated p-8 sm:p-10 flex flex-col justify-center items-center text-center">
+                <div className="text-[13px] font-medium uppercase tracking-wider text-fg-soft mb-4">
+                  Usage Based
                 </div>
-                <div className="text-xs text-fg-muted">ideal for small teams</div>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-4xl font-semibold tracking-tighter text-fg">$10</span>
+                  <span className="text-fg-soft font-medium">/ 10k</span>
+                </div>
+                <span className="text-[13px] text-fg-muted mt-2 mb-8">credits</span>
+                
+                <Button asChild size="lg" className="w-full">
+                  <a href={DASHBOARD_URL}>Get Started</a>
+                </Button>
               </div>
             </div>
-
-            <div className="flex flex-col items-center justify-between gap-3 rounded-xl bg-bg-subtle/60 px-4 py-3 text-left sm:flex-row">
-              <ul className="list-disc space-y-1 pl-4 text-xs text-fg-muted sm:text-sm">
-                <li>Usage &amp; billing tracked per API key</li>
-                <li>Onramp credits instantly via dashboard (cards, onramp)</li>
-                <li>Per-user usage logs via the `/user` endpoints</li>
-              </ul>
-              <Button asChild size="sm">
-                <a href={DASHBOARD_URL}>Open dashboard</a>
-              </Button>
-            </div>
-          </div>
-        </Card>
+          </Card>
+        </motion.div>
       </div>
     </section>
   );
 }
-

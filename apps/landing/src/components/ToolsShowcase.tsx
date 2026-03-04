@@ -11,7 +11,7 @@ const tools = [
   },
   {
     id: "fin-data",
-    label: "Financial Data (FMP)",
+    label: "Financial Data",
     description: "Fundamentals, ratios, and analyst estimates.",
   },
   {
@@ -21,7 +21,7 @@ const tools = [
   },
   {
     id: "memory",
-    label: "Semantic Memory (Qdrant)",
+    label: "Semantic Memory",
     description: "Recall prior research, notes, and documents.",
   },
   {
@@ -38,41 +38,43 @@ const tools = [
 
 export function ToolsShowcase() {
   return (
-    <section className="py-10 sm:py-14">
-      <div className="mx-auto max-w-5xl">
-        <div className="mb-8 text-center">
-          <h2 className="text-2xl font-semibold tracking-tight text-fg sm:text-3xl">
+    <section className="py-20 sm:py-24">
+      <div className="mx-auto max-w-6xl px-6 lg:px-8">
+        <div className="mb-16 md:text-center">
+          <h2 className="text-3xl font-semibold tracking-tight text-fg sm:text-4xl">
             Built on serious research tooling.
           </h2>
-          <p className="mt-3 text-sm text-fg-muted sm:text-base">
+          <p className="mt-4 text-[17px] text-fg-muted max-w-2xl mx-auto">
             MarketSage orchestrates search, fundamentals, vector memory, and
             guardrails into a single agentic layer.
           </p>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {tools.map((tool, index) => (
             <motion.div
               key={tool.id}
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 15 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
+              viewport={{ once: true, margin: "-50px" }}
               transition={{
-                duration: 0.22,
-                delay: index * 0.03,
-                ease: [0.21, 0.47, 0.32, 0.98],
+                duration: 0.4,
+                delay: index * 0.05,
+                ease: [0.16, 1, 0.3, 1],
               }}
             >
-              <Card className="h-full border border-border-subtle bg-bg-elevated/90">
-                <div className="flex items-center gap-2">
-                  <span className="inline-flex h-7 w-7 items-center justify-center rounded-xl bg-accent-soft text-xs font-semibold text-accent-strong">
+              <Card hoverable className="h-full border border-border-subtle bg-bg p-6">
+                <div className="flex flex-col gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-bg-elevated border border-border-strong text-[13px] font-semibold text-fg">
                     {index + 1}
-                  </span>
-                  <h3 className="text-sm font-medium text-fg">{tool.label}</h3>
+                  </div>
+                  <div>
+                    <h3 className="text-[15px] font-medium text-fg">{tool.label}</h3>
+                    <p className="mt-1.5 text-[14px] leading-relaxed text-fg-muted">
+                      {tool.description}
+                    </p>
+                  </div>
                 </div>
-                <p className="mt-2 text-xs text-fg-muted sm:text-sm">
-                  {tool.description}
-                </p>
               </Card>
             </motion.div>
           ))}
@@ -81,4 +83,3 @@ export function ToolsShowcase() {
     </section>
   );
 }
-

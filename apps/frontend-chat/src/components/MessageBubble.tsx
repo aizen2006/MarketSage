@@ -1,3 +1,5 @@
+"use client";
+
 import { motion } from "motion/react";
 import type { Message } from "../types/chat";
 import { messageEnter } from "../lib/motion";
@@ -15,43 +17,58 @@ export function MessageBubble({ message }: MessageBubbleProps) {
 
   return (
     <motion.div
-      className={`flex w-full gap-2 text-sm ${
+      className={`group flex w-full gap-4 text-sm ${
         isAgent ? "justify-start" : "justify-end"
       }`}
       {...messageEnter}
     >
       {isAgent && (
-        <div className="mt-1 h-7 w-7 rounded-full bg-accent-soft text-[0.7rem] font-semibold text-accent-strong shadow-soft">
-          <span className="flex h-full items-center justify-center">AI</span>
+        <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-fg text-[11px] font-bold text-bg shadow-sm">
+          FA
         </div>
       )}
+      
       <div
-        className={`max-w-[80%] rounded-2xl px-3 py-2 text-sm shadow-sm ${
-          isAgent
-            ? "border border-subtle bg-bg-elevated text-fg"
-            : "border border-accent bg-accent-soft text-fg"
+        className={`relative flex max-w-[85%] flex-col gap-1 ${
+          isAgent ? "items-start" : "items-end"
         }`}
       >
-        <p className="whitespace-pre-wrap text-[0.85rem] leading-relaxed">
-          {message.content}
-        </p>
-        <div className="mt-1 flex items-center justify-between gap-3 text-[0.7rem] text-fg-soft">
+        <div
+          className={`rounded-2xl px-4 py-3 text-[15px] leading-relaxed shadow-sm ${
+            isAgent
+              ? "bg-bg-elevated border border-border-subtle text-fg"
+              : "bg-fg text-bg"
+          }`}
+        >
+          <p className="whitespace-pre-wrap">{message.content}</p>
+        </div>
+        
+        <div 
+          className={`flex items-center gap-2 text-[11px] text-fg-soft opacity-0 transition-opacity group-hover:opacity-100 ${
+            isAgent ? "pl-1" : "pr-1 flex-row-reverse"
+          }`}
+        >
           <span>{timeLabel}</span>
-          <span>
-            {message.status === "sending" && "Sending…"}
-            {message.status === "sent" && "Sent ✓"}
-            {message.status === "error" && (
-              <span className="text-danger">Failed • tap to retry</span>
-            )}
-          </span>
+          {message.status && !isAgent && (
+            <>
+              <span>•</span>
+              <span>
+                {message.status === "sending" && "Sending..."}
+                {message.status === "sent" && "Delivered"}
+                {message.status === "error" && (
+                  <span className="text-danger">Failed to send</span>
+                )}
+              </span>
+            </>
+          )}
         </div>
       </div>
+
       {!isAgent && (
-        <div className="mt-1 h-7 w-7 rounded-full bg-bg-subtle text-[0.7rem] font-semibold text-fg-soft">
-          <span className="flex h-full items-center justify-center">You</span>
+        <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-bg-elevated border border-border-subtle text-[11px] font-bold text-fg-soft">
+          YOU
         </div>
       )}
     </motion.div>
   );
 }
-

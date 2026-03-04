@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
+import { Button } from "../primitives/Button";
 
 export interface DialogProps {
   open: boolean;
@@ -10,6 +11,7 @@ export interface DialogProps {
   cancelLabel?: string;
   onConfirm: () => void;
   onCancel: () => void;
+  danger?: boolean;
 }
 
 export function Dialog({
@@ -20,43 +22,38 @@ export function Dialog({
   cancelLabel = "Cancel",
   onConfirm,
   onCancel,
+  danger = false,
 }: DialogProps) {
   if (!open) return null;
 
   return (
     <div
-      className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm p-4 dark:bg-black/40"
       role="dialog"
       aria-modal="true"
     >
       <motion.div
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.2 }}
-        className="w-full max-w-sm rounded-2xl border border-subtle bg-bg-elevated p-5 text-sm text-fg shadow-soft"
+        initial={{ opacity: 0, scale: 0.95, y: 8 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 8 }}
+        transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+        className="w-full max-w-sm rounded-xl border border-border-subtle bg-bg-elevated p-6 text-sm text-fg shadow-xl"
       >
-        <h2 className="text-sm font-semibold">{title}</h2>
+        <h2 className="text-base font-semibold tracking-tight">{title}</h2>
         {description && (
-          <p className="mt-2 text-xs text-fg-muted">{description}</p>
+          <p className="mt-2 text-[13px] leading-relaxed text-fg-muted">
+            {description}
+          </p>
         )}
-        <div className="mt-4 flex justify-end gap-2">
-          <button
-            type="button"
-            onClick={onCancel}
-            className="rounded-xl border border-subtle bg-bg-subtle px-3 py-1.5 text-xs text-fg-muted hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
-          >
+        <div className="mt-6 flex justify-end gap-3">
+          <Button variant="ghost" onClick={onCancel}>
             {cancelLabel}
-          </button>
-          <button
-            type="button"
-            onClick={onConfirm}
-            className="rounded-xl bg-danger px-3 py-1.5 text-xs font-medium text-white shadow-soft hover:bg-danger/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
-          >
+          </Button>
+          <Button variant={danger ? "danger" : "primary"} onClick={onConfirm}>
             {confirmLabel}
-          </button>
+          </Button>
         </div>
       </motion.div>
     </div>
   );
 }
-

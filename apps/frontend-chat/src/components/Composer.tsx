@@ -1,8 +1,8 @@
 "use client";
 
-import { KeyboardEvent, useMemo, useState } from "react";
-import { motion } from "motion/react";
-import { buttonTap } from "../lib/motion";
+import { KeyboardEvent, useMemo, useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "motion/react";
+import { IconButton } from "@repo/ui";
 
 interface ComposerProps {
   onSend: (content: string) => void;
@@ -21,6 +21,7 @@ export function Composer({ onSend, disabled, isEmptyState }: ComposerProps) {
   const [value, setValue] = useState("");
   const [focused, setFocused] = useState(false);
   const [activeSuggestion, setActiveSuggestion] = useState<number | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const showSuggestions = focused && value.trim().length > 0;
 
@@ -29,11 +30,22 @@ export function Composer({ onSend, disabled, isEmptyState }: ComposerProps) {
     return SUGGESTIONS.filter((s) => s.toLowerCase().includes(q)).slice(0, 4);
   }, [value]);
 
+  // Auto-resize textarea
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 200)}px`;
+    }
+  }, [value]);
+
   function handleSend() {
     if (!value.trim() || disabled) return;
     onSend(value.trim());
     setValue("");
     setActiveSuggestion(null);
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+    }
   }
 
   function handleKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
@@ -61,9 +73,6 @@ export function Composer({ onSend, disabled, isEmptyState }: ComposerProps) {
               filteredSuggestions.length;
         return next;
       });
-    } else if (event.key === "Enter" && event.shiftKey) {
-      // Allow newline with Shift+Enter
-      return;
     } else if (event.key === "Tab" && activeSuggestion !== null) {
       event.preventDefault();
       const suggestion = filteredSuggestions[activeSuggestion];
@@ -73,77 +82,90 @@ export function Composer({ onSend, disabled, isEmptyState }: ComposerProps) {
 
   return (
     <div
-      className={`relative w-full max-w-2xl rounded-2xl border border-subtle bg-bg-elevated px-3 py-2 shadow-soft transition ${
-        focused ? "border-accent shadow-soft" : ""
+      className={`relative w-full max-w-3xl rounded-2xl border transition-all duration-300 bg-bg shadow-sm ${
+        focused 
+          ? "border-border-strong shadow-lg ring-1 ring-border-strong" 
+          : "border-border-subtle"
       }`}
       aria-label="Message composer"
     >
-      <div className="flex items-end gap-2">
-        <button
-          type="button"
-          className="mb-1 flex h-9 w-9 items-center justify-center rounded-xl bg-bg-subtle text-xl text-fg-soft hover:text-fg"
+      <div className="flex items-end gap-3 px-3 py-3">
+        <IconButton
+          variant="ghost"
+          size="sm"
+          className="mb-0.5 shrink-0 rounded-xl"
           aria-label="Insert template or attachment"
         >
-          +
-        </button>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        </IconButton>
+        
         <textarea
+          ref={textareaRef}
           value={value}
           onChange={(e) => setValue(e.target.value)}
           onKeyDown={handleKeyDown}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
-          rows={isEmptyState ? 2 : 1}
-          className="max-h-32 flex-1 resize-none bg-transparent pb-1 text-sm text-fg placeholder:text-fg-soft focus:outline-none"
-          placeholder="Type your financial query…"
+          rows={isEmptyState && !value ? 2 : 1}
+          className="max-h-[200px] flex-1 resize-none bg-transparent py-1.5 text-[15px] leading-relaxed text-fg placeholder:text-fg-soft focus:outline-none"
+          placeholder="Ask MarketSage anything..."
           aria-label="Type your financial query"
         />
+        
         <motion.button
           type="button"
           disabled={disabled || !value.trim()}
           onClick={handleSend}
-          className="mb-1 inline-flex h-9 w-9 items-center justify-center rounded-full bg-accent text-sm text-white shadow-soft disabled:cursor-not-allowed disabled:bg-accent/40"
+          whileHover={value.trim() && !disabled ? { scale: 1.05 } : {}}
+          whileTap={value.trim() && !disabled ? { scale: 0.95 } : {}}
+          className={`mb-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl transition-colors ${
+            value.trim() && !disabled
+              ? "bg-fg text-bg shadow-md"
+              : "bg-bg-elevated text-fg-soft"
+          }`}
           aria-label="Send message"
-          {...buttonTap}
         >
-          ➤
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>
         </motion.button>
       </div>
 
-      {showSuggestions && filteredSuggestions.length > 0 && (
-        <div
-          className="absolute bottom-full left-0 z-10 mb-2 w-full max-w-md rounded-2xl border border-subtle bg-bg-elevated p-2 text-xs text-fg shadow-soft"
-          role="listbox"
-          aria-label="Smart suggestions"
-        >
-          {filteredSuggestions.map((suggestion, index) => {
-            const selected = index === activeSuggestion;
-            return (
-              <button
-                key={suggestion}
-                type="button"
-                role="option"
-                aria-selected={selected}
-                className={`mb-1 w-full rounded-xl px-2 py-1 text-left transition last:mb-0 ${
-                  selected
-                    ? "bg-accent-soft text-fg"
-                    : "hover:bg-bg-subtle text-fg-muted"
-                }`}
-                onMouseDown={(e) => {
-                  e.preventDefault();
-                  setValue(suggestion);
-                  setActiveSuggestion(index);
-                }}
-              >
-                {suggestion}
-              </button>
-            );
-          })}
-          <p className="mt-1 px-1 text-[0.68rem] text-fg-soft">
-            Use ↑/↓ to navigate, Tab to apply.
-          </p>
-        </div>
-      )}
+      <AnimatePresence>
+        {showSuggestions && filteredSuggestions.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            className="absolute bottom-[calc(100%+12px)] left-0 z-50 w-full rounded-xl border border-border-subtle bg-bg-elevated p-1.5 shadow-xl backdrop-blur-md"
+            role="listbox"
+            aria-label="Smart suggestions"
+          >
+            {filteredSuggestions.map((suggestion, index) => {
+              const selected = index === activeSuggestion;
+              return (
+                <button
+                  key={suggestion}
+                  type="button"
+                  role="option"
+                  aria-selected={selected}
+                  className={`flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-[13px] transition-colors ${
+                    selected
+                      ? "bg-bg-subtle text-fg"
+                      : "text-fg-muted hover:bg-bg-subtle hover:text-fg"
+                  }`}
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    setValue(suggestion);
+                    setActiveSuggestion(index);
+                  }}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 opacity-50"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+                  <span className="truncate">{suggestion}</span>
+                </button>
+              );
+            })}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
-
