@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "motion/react";
-import { typingDotKeyframes } from "../lib/motion";
 
 export function TypingIndicator() {
   return (
@@ -12,9 +11,15 @@ export function TypingIndicator() {
           <motion.span
             key={index}
             className="h-1.5 w-1.5 rounded-full bg-fg-soft"
-            {...typingDotKeyframes}
+            initial={{ y: 0, opacity: 0.4 }}
+            animate={{
+              y: [0, -2, 0],
+              opacity: [0.4, 1, 0.4],
+            }}
             transition={{
-              ...typingDotKeyframes.animate.transition,
+              duration: 0.9,
+              repeat: Infinity,
+              ease: "easeInOut",
               delay: index * 0.12,
             }}
           />
