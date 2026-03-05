@@ -13,6 +13,7 @@
     "apps/api-backend": {
       "name": "api_backend",
       "dependencies": {
+        "@elysiajs/cors": "^1.0.2",
         "@elysiajs/jwt": "^1.4.1",
         "@openai/agents": "^0.5.3",
         "agents": "*",
@@ -30,6 +31,7 @@
     "apps/backend": {
       "name": "backend",
       "dependencies": {
+        "@elysiajs/cors": "^1.0.2",
         "@elysiajs/jwt": "^1.4.1",
         "@elysiajs/stream": "^1.1.0",
         "@openai/agents": "^0.5.3",
@@ -70,6 +72,7 @@
       "name": "frontend-chat",
       "version": "0.1.0",
       "dependencies": {
+        "@repo/ui": "*",
         "motion": "^12.35.0",
         "next": "16.1.6",
         "react": "19.2.3",
@@ -299,6 +302,8 @@
     "@electric-sql/pglite-socket": ["@electric-sql/pglite-socket@0.0.20", "", { "peerDependencies": { "@electric-sql/pglite": "0.3.15" }, "bin": { "pglite-server": "dist/scripts/server.js" } }, "sha512-J5nLGsicnD9wJHnno9r+DGxfcZWh+YJMCe0q/aCgtG6XOm9Z7fKeite8IZSNXgZeGltSigM9U/vAWZQWdgcSFg=="],
 
     "@electric-sql/pglite-tools": ["@electric-sql/pglite-tools@0.2.20", "", { "peerDependencies": { "@electric-sql/pglite": "0.3.15" } }, "sha512-BK50ZnYa3IG7ztXhtgYf0Q7zijV32Iw1cYS8C+ThdQlwx12V5VZ9KRJ42y82Hyb4PkTxZQklVQA9JHyUlex33A=="],
+
+    "@elysiajs/cors": ["@elysiajs/cors@1.4.1", "", { "peerDependencies": { "elysia": ">= 1.4.0" } }, "sha512-lQfad+F3r4mNwsxRKbXyJB8Jg43oAOXjRwn7sKUL6bcOW3KjUqUimTS+woNpO97efpzjtDE0tEjGk9DTw8lqTQ=="],
 
     "@elysiajs/jwt": ["@elysiajs/jwt@1.4.1", "", { "dependencies": { "jose": "^6.0.11" }, "peerDependencies": { "elysia": ">= 1.4.27" } }, "sha512-Qx28XE7hUf2XK/+HZB+hOBGSq6dPs4u1lk80wNge9jijAfzCwftxjOiAWO57RKYSEMdJTOG1ItEL5fbXjJyWsA=="],
 
