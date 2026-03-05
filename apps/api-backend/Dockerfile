@@ -12,13 +12,13 @@ RUN bun install --frozen-lockfile
 # Generate Prisma client for the db package
 RUN cd /app/packages/db && bunx prisma generate
 
-WORKDIR /app/apps/backend
+WORKDIR /app/apps/api-backend
 
 ENV NODE_ENV=production
-EXPOSE 3000
+EXPOSE 4001
 
 # Entrypoint runs migrations then starts the server
-COPY apps/backend/entrypoint.sh /app/entrypoint.sh
+COPY apps/api-backend/entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 ENTRYPOINT ["/app/entrypoint.sh"]
 

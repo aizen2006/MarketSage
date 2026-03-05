@@ -3,6 +3,11 @@
   "module": "index.ts",
   "type": "module",
   "private": true,
+  "scripts": {
+    "dev": "bun run src/index.ts",
+    "start": "bun run src/index.ts",
+    "build": "echo \"api-backend build (no compilation step)\""
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },
@@ -10,6 +15,7 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "@elysiajs/cors": "^1.0.2",
     "@elysiajs/jwt": "^1.4.1",
     "@openai/agents": "^0.5.3",
     "agents": "*",
