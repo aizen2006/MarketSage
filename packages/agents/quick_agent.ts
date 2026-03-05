@@ -4,7 +4,7 @@ import "dotenv/config";
 import { z } from "zod";
 import { web_search } from "./tools/web_search";
 import { extract_webpage } from "./tools/extract_webpage";
-import { fin_research } from "./tools/fin_rearch";
+import { fin_research } from "./tools/fin_research";
 // types
 const ResponseOutput = z.object({ response: z.string() });
 type ResponseOutput = z.infer<typeof ResponseOutput>;

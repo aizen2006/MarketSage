@@ -1,0 +1,49 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: marketsage-db
+    environment:
+      POSTGRES_DB: marketsage
+      POSTGRES_USER: marketsage
+      POSTGRES_PASSWORD: marketsage
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: .
+      dockerfile: ./apps/backend/Dockerfile
+    container_name: marketsage-backend
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql://marketsage:marketsage@db:5432/marketsage?schema=public}
+      JWT_SECRET: ${JWT_SECRET:-change-me}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3001}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      QDRANT_API_KEY: ${QDRANT_API_KEY:-}
+      QDRANT_URL: ${QDRANT_URL:-}
+      TAVILY_API_KEY: ${TAVILY_API_KEY:-}
+      FMP_API_KEY: ${FMP_API_KEY:-}
+    depends_on:
+      - db
+    ports:
+      - "3000:3000"
+
+  frontend:
+    build:
+      context: .
+      dockerfile: ./apps/frontend-chat/Dockerfile
+    container_name: marketsage-frontend
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3000}
+    depends_on:
+      - backend
+    ports:
+      - "3001:3001"
+
+volumes:
+  db-data:
+

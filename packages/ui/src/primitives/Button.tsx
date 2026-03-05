@@ -7,21 +7,18 @@ import {
   cloneElement,
   isValidElement,
 } from "react";
-import { motion } from "motion/react";
-import { buttonTap } from "../motion/presets";
 
 type Variant = "primary" | "secondary" | "ghost" | "outline" | "danger";
 type Size = "xs" | "sm" | "md" | "lg";
 
-export interface ButtonProps
-  extends ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: Variant;
   size?: Size;
   asChild?: boolean;
 }
 
 const base =
-  "inline-flex items-center justify-center rounded-lg font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-strong focus-visible:ring-offset-1 focus-visible:ring-offset-bg disabled:opacity-50 disabled:cursor-not-allowed select-none";
+  "inline-flex items-center justify-center rounded-lg font-medium transition-all duration-200 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-strong focus-visible:ring-offset-1 focus-visible:ring-offset-bg disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 select-none";
 
 const sizeClasses: Record<Size, string> = {
   xs: "h-7 px-2.5 text-[11px]",
@@ -57,12 +54,8 @@ export function Button({
   }
 
   return (
-    <motion.button
-      {...buttonTap}
-      {...props}
-      className={classes}
-    >
+    <button {...props} className={classes}>
       {children}
-    </motion.button>
+    </button>
   );
 }

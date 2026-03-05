@@ -1,6 +1,6 @@
 import { web_search } from "./web_search";
 import { extract_webpage } from "./extract_webpage";
-import { fin_research } from "./fin_rearch";
+import { fin_research } from "./fin_research";
 import { qdrant_search } from "./qdrant_search";
 import { qdrant_document_search } from "./qdrant_document_search";
 import { qdrant_retrieve } from "./qdrant_retrieve";

@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { motion } from "motion/react";
 import type { Conversation } from "../types/chat";
 import { ConversationItem } from "./ConversationItem";
 import { ConfirmDialog } from "./ConfirmDialog";
@@ -75,7 +74,7 @@ export function Sidebar({
               type="search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search..."
+              placeholder="Search conversations..."
               className="h-8 w-full rounded-md border border-transparent bg-bg-elevated pl-8 pr-3 text-[13px] text-fg placeholder:text-fg-soft transition-all focus:border-border-strong focus:bg-bg focus:outline-none focus:ring-1 focus:ring-border-strong"
             />
           </div>

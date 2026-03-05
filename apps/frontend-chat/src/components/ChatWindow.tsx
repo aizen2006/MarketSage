@@ -1,3 +1,5 @@
+\"use client\";
+
 import { motion } from "motion/react";
 import type { Message, Conversation } from "../types/chat";
 import { MessageBubble } from "./MessageBubble";

@@ -1,14 +1,11 @@
 "use client";
 
 import type { ButtonHTMLAttributes, ReactNode } from "react";
-import { motion } from "motion/react";
-import { buttonTap } from "../motion/presets";
 
 type Variant = "default" | "ghost" | "outline";
 type Size = "xs" | "sm" | "md" | "lg";
 
-export interface IconButtonProps
-  extends ButtonHTMLAttributes<HTMLButtonElement> {
+export interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
   variant?: Variant;
   size?: Size;
@@ -37,10 +34,9 @@ export function IconButton({
   ...props
 }: IconButtonProps) {
   return (
-    <motion.button
-      {...buttonTap}
+    <button
       {...props}
-      className={`inline-flex items-center justify-center rounded-lg transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-strong focus-visible:ring-offset-1 focus-visible:ring-offset-bg disabled:opacity-50 disabled:cursor-not-allowed ${sizeClasses[size]} ${variantClasses[variant]} ${className}`}
+      className={`inline-flex items-center justify-center rounded-lg transition-colors duration-200 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-strong focus-visible:ring-offset-1 focus-visible:ring-offset-bg disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 ${sizeClasses[size]} ${variantClasses[variant]} ${className}`}
     />
   );
 }

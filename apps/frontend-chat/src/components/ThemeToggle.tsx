@@ -11,7 +11,7 @@ export function ThemeToggle() {
     <button
       type="button"
       onClick={toggleTheme}
-      className="relative inline-flex h-8 items-center rounded-full border border-subtle bg-bg-subtle px-1 text-xs text-fg-soft shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
+      className="relative inline-flex h-8 items-center rounded-full border border-border-subtle bg-bg-subtle px-1 text-xs text-fg-soft shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
       aria-label="Toggle theme"
       aria-pressed={isDark}
     >
