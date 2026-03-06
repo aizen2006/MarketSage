@@ -22,7 +22,7 @@ export function ChatWindow({
 
   return (
     <section className="flex h-full flex-1 flex-col bg-bg">
-      <div className="flex-1 overflow-y-auto px-4 pb-4 pt-6 md:px-8 md:pt-8 scrollbar-hide">
+      <div className="flex-1 overflow-y-auto px-4 pb-4 pt-6 md:px-6 md:pt-8 scrollbar-hide">
         {!hasMessages && (
           <div className="flex h-full flex-col items-center justify-center text-center">
             <motion.div
@@ -64,7 +64,7 @@ export function ChatWindow({
         )}
 
         {hasMessages && (
-          <div className="mx-auto flex w-full max-w-3xl flex-col gap-6 pb-8">
+          <div className="mx-auto flex w-full max-w-4xl flex-col gap-6 pb-8">
             {messages.map((message) => (
               <MessageBubble key={message.id} message={message} />
             ))}

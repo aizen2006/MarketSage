@@ -27,9 +27,9 @@ export default function ChatPage() {
 
   return (
     <AuthGuard>
-      <div className="flex min-h-screen flex-col bg-bg text-fg md:flex-row">
+      <div className="flex h-screen flex-col overflow-hidden bg-bg text-fg md:flex-row">
         <div
-          className={`fixed inset-y-0 left-0 z-30 w-72 transform bg-bg-subtle transition-transform md:static md:z-auto md:translate-x-0 ${
+          className={`fixed inset-y-0 left-0 z-30 w-72 transform bg-bg-subtle transition-transform md:sticky md:top-0 md:h-screen md:self-start md:z-auto md:translate-x-0 ${
             sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
           }`}
         >

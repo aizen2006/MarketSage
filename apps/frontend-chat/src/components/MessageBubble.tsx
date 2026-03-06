@@ -19,7 +19,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
 
   return (
     <motion.div
-      className={`group flex w-full gap-4 text-sm ${
+      className={`group flex w-full gap-3 text-sm overflow-hidden ${
         isAgent ? "justify-start" : "justify-end"
       }`}
       {...messageEnter}
@@ -31,7 +31,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
       )}
 
       <div
-        className={`relative flex max-w-[85%] flex-col gap-1 ${
+        className={`relative flex max-w-[92%] flex-col gap-1 ${
           isAgent ? "items-start" : "items-end"
         }`}
       >
@@ -43,7 +43,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
           }`}
         >
           {isAgent ? (
-            <div className="agent-markdown max-w-none">
+            <div className="agent-markdown max-w-full overflow-hidden">
               <ReactMarkdown remarkPlugins={[remarkGfm]}>
                 {message.content}
               </ReactMarkdown>

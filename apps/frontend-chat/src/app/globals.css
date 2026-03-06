@@ -99,6 +99,11 @@ body {
   color: var(--bg);
 }
 
+.agent-markdown {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
 /* Markdown prose styles for agent messages */
 .agent-markdown h1 {
   font-size: 1.35rem;
@@ -163,6 +168,7 @@ body {
   padding: 0.75rem 1rem;
   margin: 0.5rem 0;
   overflow-x: auto;
+  max-width: 100%;
 }
 .agent-markdown pre code {
   background: transparent;
@@ -176,16 +182,22 @@ body {
   border-collapse: collapse;
   margin: 0.5rem 0;
   font-size: 0.88em;
+  display: block;
+  overflow-x: auto;
 }
 .agent-markdown th,
 .agent-markdown td {
   border: 1px solid var(--border-subtle);
   padding: 0.35rem 0.6rem;
   text-align: left;
+  font-variant-numeric: tabular-nums;
 }
 .agent-markdown th {
   background: var(--bg-subtle);
   font-weight: 600;
+}
+.agent-markdown tr:nth-child(even) td {
+  background: color-mix(in srgb, var(--bg-subtle) 60%, transparent);
 }
 .agent-markdown a {
   color: var(--accent-strong);
