@@ -325,10 +325,10 @@ export default function ApiKeysPage() {
 
               {/* Keys list */}
               <Card className="border border-border-subtle/80 bg-bg/80 backdrop-blur-sm">
-                <div className="flex items-center justify-between border-b border-border-subtle/80 pb-3">
+                <div className="flex items-start justify-between border-b border-border-subtle/80 pb-4">
                   <div>
                     <h2 className="text-sm font-semibold text-fg">Your keys</h2>
-                    <p className="mt-1 text-[11px] text-fg-soft">
+                    <p className="mt-1.5 text-[11px] text-fg-soft">
                       Rotate keys regularly and disable any that are no longer in
                       use.
                     </p>
@@ -364,7 +364,7 @@ export default function ApiKeysPage() {
                     </Button>
                   </div>
                 ) : (
-                  <div className="mt-3 space-y-2">
+                  <div className="mt-4 space-y-3">
                     {keys.map((key, index) => (
                       <motion.div
                         key={key.id}
@@ -377,7 +377,7 @@ export default function ApiKeysPage() {
                           boxShadow:
                             "0 18px 45px rgba(15,23,42,0.35)",
                         }}
-                        className="flex items-center justify-between rounded-lg border border-border-subtle bg-bg-subtle/80 px-3 py-2 text-xs transition-transform"
+                        className="flex items-center justify-between rounded-lg border border-border-subtle bg-bg-subtle/80 px-3.5 py-3 text-xs transition-transform"
                       >
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2">
