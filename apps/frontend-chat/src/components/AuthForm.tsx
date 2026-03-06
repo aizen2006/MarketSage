@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, FormEvent } from "react";
+import { useState, FormEvent } from "react";
 import Link from "next/link";
 import { motion } from "motion/react";
 import { useAuth } from "../context/AuthContext";
@@ -19,10 +19,6 @@ export function AuthForm({ mode }: AuthFormProps) {
   const [password, setPassword] = useState("");
   const [localError, setLocalError] = useState<string | null>(null);
 
-  useEffect(() => {
-    setLocalError(null);
-  }, [mode]);
-
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
     if (!email || !password || (mode === "signup" && !name)) {
@@ -38,23 +34,23 @@ export function AuthForm({ mode }: AuthFormProps) {
     }
   }
 
-  const title = mode === "signin" ? "Log in to MarketSage" : "Create your account";
+  const title = mode === "signin" ? "Welcome back" : "Create your account";
   const subtitle =
     mode === "signin"
-      ? "Welcome back. Enter your details to continue."
-      : "Start chatting with your finance agent today.";
+      ? "Sign in with your email to continue."
+      : "You'll get 100 free credits to start.";
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-bg px-4">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-bg px-4 py-10">
       <motion.div
-        initial={{ opacity: 0, y: 10 }}
+        initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-        className="w-full max-w-[400px]"
+        transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+        className="w-full max-w-[480px]"
         aria-labelledby="auth-title"
       >
-        <div className="mb-8 flex flex-col items-center text-center">
-          <div className="mb-6 flex h-10 w-10 items-center justify-center rounded-xl bg-fg text-sm font-bold text-bg shadow-sm">
+        <div className="mb-10 flex flex-col items-center text-center">
+          <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl bg-fg text-sm font-bold text-bg shadow-sm">
             FA
           </div>
           <h1
@@ -63,11 +59,11 @@ export function AuthForm({ mode }: AuthFormProps) {
           >
             {title}
           </h1>
-          <p className="mt-2 text-[15px] text-fg-soft">{subtitle}</p>
+          <p className="mt-3 text-[15px] text-fg-muted">{subtitle}</p>
         </div>
 
-        <div className="rounded-2xl border border-border-subtle bg-bg-elevated p-8 shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgba(255,255,255,0.02)]">
-          <form className="flex flex-col gap-4" onSubmit={handleSubmit} noValidate>
+        <div className="rounded-2xl border border-border-subtle bg-bg-elevated p-10 shadow-soft">
+          <form className="flex flex-col items-stretch gap-6" onSubmit={handleSubmit} noValidate>
             {mode === "signup" && (
               <Input
                 id="name"
@@ -77,17 +73,19 @@ export function AuthForm({ mode }: AuthFormProps) {
                 placeholder="John Doe"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                className="h-11"
               />
             )}
 
             <Input
               id="email"
-              label="Email address"
+              label="Email"
               type="email"
               autoComplete="email"
-              placeholder="john@example.com"
+              placeholder={mode === "signin" ? "name@company.com" : "john@company.com"}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              className="h-11"
             />
 
             <div className="relative">
@@ -112,62 +110,44 @@ export function AuthForm({ mode }: AuthFormProps) {
                 }
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                placeholder={mode === "signup" ? "Create a strong password" : "Enter your password"}
+                className="h-11"
               />
             </div>
 
             {(localError || error) && (
               <div
                 role="alert"
-                className="mt-2 rounded-lg border border-danger/20 bg-danger/5 px-3 py-2 text-[13px] text-danger"
+                className="rounded-lg border border-danger/20 bg-danger/5 px-3 py-2.5 text-[13px] text-danger"
               >
                 {localError || error}
               </div>
             )}
 
-            <Button
-              type="submit"
-              size="lg"
-              className="mt-2 w-full text-[15px]"
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <span className="inline-flex items-center gap-2">
-                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-bg/30 border-t-bg" />
-                  <span>Please wait...</span>
-                </span>
-              ) : (
-                <span>{mode === "signin" ? "Log in" : "Sign up"}</span>
-              )}
-            </Button>
-          </form>
-
-          <div className="relative my-6 text-center text-[13px]">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-border-subtle" />
-            </div>
-            <span className="relative bg-bg-elevated px-4 text-fg-soft">
-              or continue with
-            </span>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            {["Google", "GitHub"].map((provider) => (
+            <div className="mt-2 w-full">
               <Button
-                key={provider}
-                type="button"
-                variant="outline"
-                className="w-full text-[13px]"
+                type="submit"
+                size="lg"
+                className="w-full flex justify-center rounded-xl text-[15px] font-medium h-10"
+                disabled={isLoading}
               >
-                {provider}
+                {isLoading ? (
+                  <span className="inline-flex items-center gap-2">
+                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-bg/30 border-t-bg" />
+                    <span>Please wait...</span>
+                  </span>
+                ) : (
+                  <span>{mode === "signin" ? "Sign in" : "Create account"}</span>
+                )}
               </Button>
-            ))}
-          </div>
+            </div>
+          </form>
         </div>
 
-        <p className="mt-8 text-center text-[14px] text-fg-soft">
+        <p className="mt-10 text-center text-[14px] text-fg-soft">
           {mode === "signin" ? (
             <>
-              Don't have an account?{" "}
+              {"Don't have an account?"}{" "}
               <Link
                 href="/signup"
                 className="font-medium text-fg hover:underline transition-colors"

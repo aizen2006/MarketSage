@@ -55,7 +55,7 @@ export abstract class ApiKeyService {
                     userId:userId
                 },
                 data:{
-                    disabled: false 
+                    disabled: true 
                 }
             })
         }else{
@@ -65,7 +65,7 @@ export abstract class ApiKeyService {
                     userId:userId
                 },
                 data:{
-                    disabled: true 
+                    disabled: false 
                 }
             })
         }

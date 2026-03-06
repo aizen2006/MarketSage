@@ -1,8 +1,25 @@
 "use client";
 
-import { KeyboardEvent, useMemo, useState, useRef, useEffect } from "react";
+import {
+  KeyboardEvent,
+  useMemo,
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  DragEvent,
+} from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { IconButton } from "@repo/ui";
+
+/** Local attachment for composer (client-side only, no upload). */
+export interface ComposerAttachment {
+  id: string;
+  file: File;
+  name: string;
+  size: number;
+  preview?: string;
+}
 
 interface ComposerProps {
   onSend: (content: string) => void;
@@ -17,11 +34,23 @@ const SUGGESTIONS = [
   "Suggest a rebalance strategy for this week.",
 ];
 
+const TEXT_TYPES = /^text\//;
+const MAX_PREVIEW_LENGTH = 120;
+
+function formatSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
 export function Composer({ onSend, disabled, isEmptyState }: ComposerProps) {
   const [value, setValue] = useState("");
   const [focused, setFocused] = useState(false);
   const [activeSuggestion, setActiveSuggestion] = useState<number | null>(null);
+  const [attachments, setAttachments] = useState<ComposerAttachment[]>([]);
+  const [isDragging, setIsDragging] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const showSuggestions = focused && value.trim().length > 0;
 
@@ -30,7 +59,41 @@ export function Composer({ onSend, disabled, isEmptyState }: ComposerProps) {
     return SUGGESTIONS.filter((s) => s.toLowerCase().includes(q)).slice(0, 4);
   }, [value]);
 
-  // Auto-resize textarea
+  const addFiles = useCallback((files: FileList | null) => {
+    if (!files?.length) return;
+    const next: ComposerAttachment[] = [];
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      next.push({
+        id: `${file.name}-${file.size}-${Date.now()}-${i}`,
+        file,
+        name: file.name,
+        size: file.size,
+      });
+    }
+    setAttachments((prev) => [...prev, ...next]);
+    // Optional: load text preview for text files
+    next.forEach((a) => {
+      if (TEXT_TYPES.test(a.file.type)) {
+        a.file
+          .text()
+          .then((text) => {
+            const preview = text.slice(0, MAX_PREVIEW_LENGTH).trim();
+            setAttachments((prev) =>
+              prev.map((x) =>
+                x.id === a.id ? { ...x, preview } : x
+              )
+            );
+          })
+          .catch(() => {});
+      }
+    });
+  }, []);
+
+  const removeAttachment = useCallback((id: string) => {
+    setAttachments((prev) => prev.filter((a) => a.id !== id));
+  }, []);
+
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
@@ -42,6 +105,7 @@ export function Composer({ onSend, disabled, isEmptyState }: ComposerProps) {
     if (!value.trim() || disabled) return;
     onSend(value.trim());
     setValue("");
+    setAttachments([]);
     setActiveSuggestion(null);
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
@@ -80,25 +144,100 @@ export function Composer({ onSend, disabled, isEmptyState }: ComposerProps) {
     }
   }
 
+  function onDragEnter(e: DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  }
+
+  function onDragLeave(e: DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+      setIsDragging(false);
+    }
+  }
+
+  function onDragOver(e: DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  function onDrop(e: DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+    const files = e.dataTransfer?.files;
+    addFiles(files ?? null);
+  }
+
   return (
     <div
       className={`relative w-full max-w-3xl rounded-2xl border transition-all duration-300 bg-bg shadow-sm ${
-        focused 
-          ? "border-border-strong shadow-lg ring-1 ring-border-strong" 
+        focused
+          ? "border-border-strong shadow-lg ring-1 ring-border-strong"
           : "border-border-subtle"
-      }`}
+      } ${isDragging ? "ring-2 ring-accent border-accent" : ""}`}
       aria-label="Message composer"
+      onDragEnter={onDragEnter}
+      onDragLeave={onDragLeave}
+      onDragOver={onDragOver}
+      onDrop={onDrop}
     >
-      <div className="flex items-end gap-3 px-3 py-3">
+      <AnimatePresence>
+        {attachments.length > 0 && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="flex flex-wrap items-center gap-2 px-3 pt-2 pb-1 border-b border-border-subtle"
+          >
+            {attachments.map((a) => (
+              <motion.div
+                key={a.id}
+                layout
+                className="flex items-center gap-1.5 rounded-lg border border-border-subtle bg-bg-subtle px-2 py-1.5 text-[12px] text-fg-muted"
+              >
+                <span className="truncate max-w-[140px]" title={a.name}>
+                  {a.name}
+                </span>
+                <span className="shrink-0 text-fg-soft">{formatSize(a.size)}</span>
+                <button
+                  type="button"
+                  onClick={() => removeAttachment(a.id)}
+                  className="shrink-0 rounded p-0.5 text-fg-soft hover:bg-bg-elevated hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-strong"
+                  aria-label={`Remove ${a.name}`}
+                >
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                </button>
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <div className="flex items-end gap-2 px-3 py-3">
+        <input
+          ref={fileInputRef}
+          type="file"
+          multiple
+          className="hidden"
+          accept="*/*"
+          onChange={(e) => {
+            addFiles(e.target.files);
+            e.target.value = "";
+          }}
+        />
         <IconButton
           variant="ghost"
           size="sm"
           className="mb-0.5 shrink-0 rounded-xl"
-          aria-label="Insert template or attachment"
+          aria-label="Attach file"
+          onClick={() => fileInputRef.current?.click()}
         >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
         </IconButton>
-        
+
         <textarea
           ref={textareaRef}
           value={value}
@@ -107,11 +246,11 @@ export function Composer({ onSend, disabled, isEmptyState }: ComposerProps) {
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
           rows={isEmptyState && !value ? 2 : 1}
-          className="max-h-[200px] flex-1 resize-none bg-transparent py-1.5 text-[15px] leading-relaxed text-fg placeholder:text-fg-soft focus:outline-none"
+          className="max-h-[200px] flex-1 resize-none bg-transparent py-1.5 pl-0 pr-1 text-[15px] leading-relaxed text-fg placeholder:text-fg-soft focus:outline-none"
           placeholder="Ask MarketSage anything..."
           aria-label="Type your financial query"
         />
-        
+
         <motion.button
           type="button"
           disabled={disabled || !value.trim()}

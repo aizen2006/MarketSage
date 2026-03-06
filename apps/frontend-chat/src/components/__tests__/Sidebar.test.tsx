@@ -2,6 +2,13 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { Sidebar } from "../Sidebar";
 import type { Conversation } from "../../types/chat";
 
+jest.mock("../../context/AuthContext", () => ({
+  useAuth: () => ({
+    user: { id: "1", name: "Test User", email: "test@example.com" },
+    signout: jest.fn(),
+  }),
+}));
+
 const conversations: Conversation[] = [
   {
     id: "1",

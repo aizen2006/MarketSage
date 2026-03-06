@@ -10,7 +10,10 @@ export const AuthModel = {
 		status: t.Number()
 	}),
 	signUpInvalidSchema: t.Object({
-		message: t.Literal('Error while signing up')
+		message: t.String()
+	}),
+	signUpServiceUnavailableSchema: t.Object({
+		message: t.Literal('Database unavailable. Please try again later.')
 	}),
     signInSchema: t.Object({
         email: t.String(),
