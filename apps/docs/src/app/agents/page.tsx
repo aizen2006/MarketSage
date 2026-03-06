@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { EndpointCard } from "../../components/EndpointCard";
 
-const BASE_URL = "https://api.marketsage.ai/v1";
+const BASE_URL = "https://marketsage-eklj.onrender.com/v1";
 
 export default function AgentsOverviewPage() {
   return (

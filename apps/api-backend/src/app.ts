@@ -1,5 +1,6 @@
 import Elysia from "elysia";
 import { cors } from "@elysiajs/cors";
+import { prisma } from "db";
 import { app as agents } from "./modules/agents";
 
 export const app = new Elysia()
@@ -9,5 +10,18 @@ export const app = new Elysia()
 		}),
 	)
 	.get("/health", () => ({ status: "ok" }))
+	.get("/health/db", async ({ set }) => {
+		try {
+			await prisma.$queryRaw`SELECT 1`;
+			return { status: "ok" };
+		} catch (e) {
+			const message = e instanceof Error ? e.message : "Database unreachable";
+			set.status = 503;
+			return {
+				status: "error",
+				message,
+			};
+		}
+	})
 	.use(agents);
 

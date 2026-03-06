@@ -8,7 +8,7 @@ const TABS = ["curl", "javascript", "python"] as const;
 type Tab = (typeof TABS)[number];
 
 const codeByTab: Record<Tab, string> = {
-  curl: `curl -X POST "https://api.marketsage.ai/v1/agents/auto" \\
+  curl: `curl -X POST "https://marketsage-eklj.onrender.com/v1/agents/auto" \\
   -H "x-api-key: sk_live_***" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -16,7 +16,7 @@ const codeByTab: Record<Tab, string> = {
   }'`,
   javascript: `import fetch from "node-fetch";
 
-const res = await fetch("https://api.marketsage.ai/v1/agents/auto", {
+const res = await fetch("https://marketsage-eklj.onrender.com/v1/agents/auto", {
   method: "POST",
   headers: {
     "x-api-key": process.env.MARKETSAGE_API_KEY!,
@@ -33,7 +33,7 @@ console.log(data.response);`,
 import requests
 
 resp = requests.post(
-    "https://api.marketsage.ai/v1/agents/auto",
+    "https://marketsage-eklj.onrender.com/v1/agents/auto",
     headers={
         "x-api-key": os.environ["MARKETSAGE_API_KEY"],
         "Content-Type": "application/json",

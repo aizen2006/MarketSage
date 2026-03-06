@@ -1,7 +1,7 @@
 import { Callout } from "../../components/Callout";
 import { CodeBlock } from "../../components/CodeBlock";
 
-const BASE_URL = "https://api.marketsage.ai/v1";
+const BASE_URL = "https://marketsage-eklj.onrender.com/v1";
 
 const quickExample = `curl -X POST "${BASE_URL}/agents/quick" \\
   -H "x-api-key: sk_live_***" \\

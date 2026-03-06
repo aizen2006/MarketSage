@@ -3,7 +3,7 @@ import { ParamTable } from "../../../components/ParamTable";
 import { RequestResponse } from "../../../components/RequestResponse";
 import { Callout } from "../../../components/Callout";
 
-const BASE_URL = "https://api.marketsage.ai/v1";
+const BASE_URL = "https://marketsage-eklj.onrender.com/v1";
 
 const bodyParams = [
   {
