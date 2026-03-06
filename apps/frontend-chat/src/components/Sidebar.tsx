@@ -2,6 +2,7 @@
 
 import { useMemo, useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import Link from "next/link";
 import type { Conversation } from "../types/chat";
 import { ConversationItem } from "./ConversationItem";
 import { ConfirmDialog } from "./ConfirmDialog";
@@ -124,8 +125,39 @@ export function Sidebar({
           )}
         </div>
 
-        {/* Footer User Profile */}
-        <div className="mt-auto pt-4 px-1 relative" ref={profileRef}>
+        {/* Footer */}
+        <div className="mt-auto pt-4 px-1 space-y-2 relative" ref={profileRef}>
+          <Link
+            href="/api-keys"
+            className="flex items-center justify-between rounded-lg px-2 py-2 text-[12px] text-fg-soft hover:bg-bg-elevated hover:text-fg transition-colors"
+          >
+            <span className="inline-flex items-center gap-1.5">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="12" cy="12" r="3" />
+                <path d="M4.9 4.9 7.1 7.1" />
+                <path d="M16.9 16.9 19.1 19.1" />
+                <path d="M3 12h3" />
+                <path d="M18 12h3" />
+                <path d="M4.9 19.1 7.1 16.9" />
+                <path d="M16.9 7.1 19.1 4.9" />
+              </svg>
+              <span>API Keys</span>
+            </span>
+            <span className="text-[10px] uppercase tracking-wide text-fg-muted">
+              New
+            </span>
+          </Link>
+
+          {/* User Profile */}
           <button
             type="button"
             onClick={() => setProfileOpen((o) => !o)}
