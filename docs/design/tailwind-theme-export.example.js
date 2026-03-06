@@ -1,13 +1,10 @@
-import type { Config } from "tailwindcss";
-
-const config: Config = {
-  content: [
-    "./src/app/**/*.{ts,tsx,js,jsx}",
-    "./src/components/**/*.{ts,tsx,js,jsx}",
-    "./src/context/**/*.{ts,tsx,js,jsx}",
-    "./src/hooks/**/*.{ts,tsx,js,jsx}",
-    "./src/lib/**/*.{ts,tsx,js,jsx}",
-  ],
+/**
+ * Tailwind theme extension for MarketSage design tokens.
+ * Copy the theme.extend block into your tailwind.config.ts (or merge with existing extend).
+ * Ensure your app’s globals.css imports packages/ui/src/tokens/tokens.css and maps
+ * CSS variables in @theme inline.
+ */
+module.exports = {
   theme: {
     extend: {
       colors: {
@@ -38,8 +35,6 @@ const config: Config = {
         sm: "var(--radius-sm)",
         md: "var(--radius-md)",
         lg: "var(--radius-lg)",
-        xl: "1rem",
-        "2xl": "1.25rem",
       },
       transitionDuration: {
         micro: "var(--motion-micro)",
@@ -49,6 +44,3 @@ const config: Config = {
   },
   darkMode: "class",
 };
-
-export default config;
-

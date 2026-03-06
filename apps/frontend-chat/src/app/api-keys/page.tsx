@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import { AuthGuard } from "../../components/AuthGuard";
-import { Button, Card, IconButton } from "@repo/ui";
+import { Button, Card, IconButton, Skeleton } from "@repo/ui";
 import { useAuth } from "../../context/AuthContext";
 import {
   ApiKey,
@@ -186,7 +186,7 @@ export default function ApiKeysPage() {
 
   return (
     <AuthGuard>
-      <div className="min-h-screen bg-bg text-fg bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.08),transparent_55%),radial-gradient(circle_at_bottom,rgba(56,189,248,0.08),transparent_55%)]">
+      <div className="min-h-screen bg-bg text-fg">
         <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 py-6 md:px-6 md:py-10">
           {/* Header */}
           <motion.div
@@ -236,7 +236,7 @@ export default function ApiKeysPage() {
             >
               {user?.email && (
                 <div className="hidden items-center gap-2 rounded-full border border-border-subtle bg-bg-subtle/60 px-3 py-1 text-[11px] text-fg-soft md:flex">
-                  <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-accent/15 text-[10px] font-semibold text-accent">
+                  <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary/20 text-[10px] font-semibold text-primary">
                     {user.email.slice(0, 2).toUpperCase()}
                   </span>
                   <span className="truncate max-w-[160px]">
@@ -249,7 +249,7 @@ export default function ApiKeysPage() {
                 size="sm"
                 onClick={handleCreateKey}
                 disabled={creating}
-                className="shadow-[0_8px_30px_rgba(15,23,42,0.35)]"
+                className=""
               >
                 {creating ? "Creating…" : "Create API key"}
               </Button>
@@ -286,7 +286,7 @@ export default function ApiKeysPage() {
                     exit={{ opacity: 0, y: -6, scale: 0.98 }}
                     transition={{ duration: 0.2 }}
                   >
-                    <Card className="border border-accent/40 bg-accent/5 shadow-[0_18px_60px_rgba(56,189,248,0.20)]">
+                    <Card className="border border-primary/40 bg-primary/10">
                       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                         <div className="space-y-1">
                           <p className="text-sm font-semibold text-fg">
@@ -341,9 +341,19 @@ export default function ApiKeysPage() {
                 </div>
 
                 {loading ? (
-                  <div className="flex items-center justify-center gap-2 py-8 text-sm text-fg-soft">
-                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-border-subtle border-t-transparent" />
-                    Loading keys…
+                  <div className="mt-4 space-y-3">
+                    {[1, 2, 3].map((i) => (
+                      <div
+                        key={i}
+                        className="flex items-center justify-between rounded-lg border border-border-subtle bg-bg-surface px-3.5 py-3"
+                      >
+                        <div className="flex min-w-0 flex-1 flex-col gap-2">
+                          <Skeleton className="h-3 w-32" />
+                          <Skeleton className="h-3 w-48" />
+                        </div>
+                        <Skeleton className="h-8 w-16 rounded-lg" />
+                      </div>
+                    ))}
                   </div>
                 ) : !hasKeys ? (
                   <div className="flex flex-col items-center justify-center gap-3 py-8 text-center">
@@ -377,7 +387,7 @@ export default function ApiKeysPage() {
                           boxShadow:
                             "0 18px 45px rgba(15,23,42,0.35)",
                         }}
-                        className="flex items-center justify-between rounded-lg border border-border-subtle bg-bg-subtle/80 px-3.5 py-3 text-xs transition-transform"
+                        className="flex items-center justify-between rounded-lg border border-border-subtle bg-bg-surface px-3.5 py-3 text-xs transition-transform hover:border-border-strong"
                       >
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2">

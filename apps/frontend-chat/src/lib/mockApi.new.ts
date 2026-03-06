@@ -26,6 +26,16 @@ async function handleJsonResponse(res: Response) {
   return data;
 }
 
+/** Normalize line breaks so markdown paragraphs and lists render correctly. */
+function normalizeReplyText(text: string): string {
+  if (!text || typeof text !== "string") return text;
+  let out = text.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+  if (out.length > 200 && !out.includes("\n\n")) {
+    out = out.replace(/\n/g, "\n\n");
+  }
+  return out;
+}
+
 function makeUserFromEmail(email: string, name?: string): User {
   const baseName = name || email.split("@")[0] || "User";
   return {
@@ -77,89 +87,61 @@ export async function mockSignUp(payload: AuthPayload) {
   };
 }
 
+/** Agent error with optional backend code for UI. */
+export class AgentError extends Error {
+  code?: string;
+  constructor(message: string, code?: string) {
+    super(message);
+    this.name = "AgentError";
+    this.code = code;
+  }
+}
+
 async function fetchAgentReply(
   mode: "quick" | "deep" | "auto",
   message: string,
 ): Promise<string> {
-  const res = await fetch(
-    `${API_BASE}/agents/${mode}?message=${encodeURIComponent(message)}`,
-    {
-      method: "GET",
+  let res: Response;
+  try {
+    res = await fetch(`${API_BASE}/agents/${mode}/json`, {
+      method: "POST",
       credentials: "include",
-      headers: {
-        Accept: "text/event-stream",
-      },
-    },
-  );
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message }),
+    });
+  } catch (error) {
+    const details =
+      error instanceof Error ? error.message : "Network request failed";
+    throw new AgentError(
+      `Could not reach backend (${API_BASE}). Check backend server/CORS. ${details}`,
+      "NETWORK_ERROR",
+    );
+  }
+
+  let data: { response?: string; error?: { code?: string; message?: string } } | null = null;
+  try {
+    data = await res.json();
+  } catch {
+    // ignore
+  }
 
   if (!res.ok) {
-    const text = await res.text();
-    let message: string;
-    try {
-      const data = JSON.parse(text);
-      message = data?.message ?? res.statusText;
-    } catch {
-      message = `Request failed with status ${res.status} ${res.statusText}`;
-    }
-    throw new Error(message);
+    const msg =
+      data?.error?.message ??
+      `Request failed with status ${res.status} ${res.statusText}`;
+    throw new AgentError(msg, data?.error?.code);
   }
 
-  if (!res.body) {
-    return "";
+  if (data?.error?.message) {
+    throw new AgentError(data.error.message, data.error.code);
   }
 
-  const reader = res.body.getReader();
-  const decoder = new TextDecoder();
-  let full = "";
-
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    full += decoder.decode(value, { stream: true });
+  const raw = data?.response;
+  if (raw != null && typeof raw === "string") {
+    return raw;
   }
 
-  const allLines = full.split("\n").map((l) => l.trim());
-  for (let i = 0; i < allLines.length; i++) {
-    if (allLines[i] === "event: error" && i + 1 < allLines.length) {
-      const dataLine = allLines[i + 1];
-      if (dataLine.startsWith("data:")) {
-        const raw = dataLine.replace(/^data:\s*/, "").trim();
-        try {
-          const data = JSON.parse(raw) as { message?: string };
-          throw new Error(data?.message ?? "Agent error");
-        } catch (e) {
-          if (e instanceof Error && e.name !== "SyntaxError") throw e;
-          throw new Error("Agent error");
-        }
-      }
-    }
-  }
-
-  const lines = allLines.filter((l) => l.startsWith("data:"));
-
-  const text = lines
-    .map((l) => l.replace(/^data:\s*/, ""))
-    .join("");
-
-  if (!text) {
-    return "No response received from agent.";
-  }
-
-  try {
-    const parsed = JSON.parse(text);
-    if (parsed && typeof parsed === "object") {
-      if ("message" in parsed && !("response" in parsed)) {
-        throw new Error(String((parsed as { message: unknown }).message));
-      }
-      if ("response" in parsed) {
-        return String((parsed as { response: unknown }).response);
-      }
-    }
-  } catch (e) {
-    if (e instanceof Error && e.message !== text) throw e;
-  }
-
-  return text;
+  return "No response received from agent.";
 }
 
 export async function mockSendMessage(params: {
@@ -168,7 +150,8 @@ export async function mockSendMessage(params: {
   mode?: "quick" | "deep" | "auto";
 }): Promise<Message> {
   const { conversationId, content, mode = "auto" } = params;
-  const reply = await fetchAgentReply(mode, content);
+  const rawReply = await fetchAgentReply(mode, content);
+  const reply = normalizeReplyText(rawReply);
 
   const now = new Date().toISOString();
 

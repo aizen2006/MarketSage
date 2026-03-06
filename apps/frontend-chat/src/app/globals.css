@@ -1,56 +1,13 @@
 @import "tailwindcss";
+@import "../../../../packages/ui/src/tokens/tokens.css";
 
 /*
-  Global design tokens for light/dark themes.
-  Premium minimal aesthetic (Vercel/Linear style).
+  MarketSage product app — tokens from @repo/ui, theme mapping for Tailwind.
 */
-
-:root {
-  /* Light theme palette */
-  --bg: #ffffff;
-  --bg-elevated: #fafafa;
-  --bg-subtle: #f5f5f5;
-  --border-subtle: #eaeaea;
-  --border-strong: #888888;
-
-  --fg: #000000;
-  --fg-muted: #666666;
-  --fg-soft: #888888;
-  --fg-inverse: #ffffff;
-
-  --accent: #000000;
-  --accent-soft: #f5f5f5;
-  --accent-strong: #333333;
-
-  --danger: #e00000;
-
-  --shadow-soft: 0 4px 24px rgba(0, 0, 0, 0.04);
-}
-
-.dark {
-  /* Dark theme palette */
-  --bg: #000000;
-  --bg-elevated: #0a0a0a;
-  --bg-subtle: #111111;
-  --border-subtle: #222222;
-  --border-strong: #444444;
-
-  --fg: #ffffff;
-  --fg-muted: #888888;
-  --fg-soft: #666666;
-  --fg-inverse: #000000;
-
-  --accent: #ffffff;
-  --accent-soft: #1a1a1a;
-  --accent-strong: #cccccc;
-
-  --danger: #ff3333;
-
-  --shadow-soft: 0 8px 32px rgba(255, 255, 255, 0.03);
-}
 
 @theme inline {
   --color-bg: var(--bg);
+  --color-bg-surface: var(--bg-surface);
   --color-bg-elevated: var(--bg-elevated);
   --color-bg-subtle: var(--bg-subtle);
   --color-border-subtle: var(--border-subtle);
@@ -61,15 +18,27 @@
   --color-fg-soft: var(--fg-soft);
   --color-fg-inverse: var(--fg-inverse);
 
+  --color-primary: var(--primary);
+  --color-primary-soft: var(--primary-soft);
   --color-accent: var(--accent);
   --color-accent-soft: var(--accent-soft);
+  --color-highlight: var(--highlight);
+  --color-highlight-soft: var(--highlight-soft);
   --color-accent-strong: var(--accent-strong);
 
   --color-danger: var(--danger);
 
   --shadow-soft: var(--shadow-soft);
+  --shadow-elevated: var(--shadow-elevated);
 
   --font-sans: var(--font-inter-sans);
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+
+  --motion-micro: var(--motion-micro);
+  --motion-macro: var(--motion-macro);
 }
 
 html,
@@ -95,8 +64,8 @@ body {
 }
 
 ::selection {
-  background-color: var(--fg);
-  color: var(--bg);
+  background-color: var(--accent);
+  color: var(--fg-inverse);
 }
 
 .agent-markdown {
@@ -159,7 +128,7 @@ body {
   border-radius: 4px;
   padding: 0.1rem 0.35rem;
   font-size: 0.85em;
-  font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, monospace;
+  font-family: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, monospace;
 }
 .agent-markdown pre {
   background: var(--bg-subtle);
@@ -200,7 +169,7 @@ body {
   background: color-mix(in srgb, var(--bg-subtle) 60%, transparent);
 }
 .agent-markdown a {
-  color: var(--accent-strong);
+  color: var(--accent);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
@@ -209,4 +178,12 @@ body {
 }
 .agent-markdown > *:last-child {
   margin-bottom: 0;
+}
+
+/* Hide scrollbar while keeping scroll behavior (chat, sidebar) */
+.scrollbar-hide {
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }

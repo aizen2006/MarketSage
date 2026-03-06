@@ -1,4 +1,4 @@
-import { run, type StreamedRunResult } from "@openai/agents";
+import { run } from "@openai/agents";
 import Triage_Agent from "agents/triage_agent";
 import Quick_Agent from "agents/quick_agent";
 import Deep_Agent from "agents/deep_agent";
@@ -12,26 +12,20 @@ interface TriageDecision {
 
 export abstract class AgentsService {
 	private static getAgent(mode: "quick" | "deep") {
-		if (mode === "quick") return Quick_Agent;
-		return Deep_Agent;
+		// Cast to avoid cross-package generic incompatibilities while preserving runtime behavior.
+		if (mode === "quick") return Quick_Agent as any;
+		return Deep_Agent as any;
 	}
 
-	static async streamChat(
-		mode: ChatMode,
+	private static maxTurnsFor(mode: "quick" | "deep") {
+		return mode === "deep" ? 14 : 25;
+	}
+
+	private static async routeAuto(
 		message: string,
 		context: { userId?: string | number },
-	): Promise<StreamedRunResult<any, any>> {
-		if (mode === "quick" || mode === "deep") {
-			return run(this.getAgent(mode), message, {
-				stream: true,
-				context,
-				maxTurns: 25,
-			});
-		}
-
-		// Auto mode: run triage first (non-streaming) to get routing decision,
-		// then stream the chosen sub-agent.
-		const triageResult = await run(Triage_Agent, message, {
+	): Promise<{ routedMode: "quick" | "deep"; augmentedMessage: string }> {
+		const triageResult = await run(Triage_Agent as any, message, {
 			context,
 			maxTurns: 25,
 		});
@@ -48,13 +42,45 @@ export abstract class AgentsService {
 				augmentedMessage = `${message}\n\n[Routing context: ${parsed.context_note}]`;
 			}
 		} catch {
-			// If triage output can't be parsed, default to quick
+			// default to quick if triage output is malformed
 		}
 
-		return run(this.getAgent(routedMode), augmentedMessage, {
-			stream: true,
+		return { routedMode, augmentedMessage };
+	}
+
+	static async chatJson(
+		mode: ChatMode,
+		message: string,
+		context: { userId?: string | number },
+	): Promise<{ response: string; mode: ChatMode }> {
+		if (mode === "quick" || mode === "deep") {
+			const result = await run(this.getAgent(mode), message, {
+				context,
+				maxTurns: this.maxTurnsFor(mode),
+			});
+			const raw = result.finalOutput;
+			const text =
+				typeof raw === "string"
+					? raw
+					: (raw && typeof raw === "object" && "response" in raw
+							? (raw as { response: unknown }).response
+							: String(raw ?? ""));
+			return { response: String(text), mode };
+		}
+
+		const { routedMode, augmentedMessage } = await this.routeAuto(message, context);
+
+		const result = await run(this.getAgent(routedMode), augmentedMessage, {
 			context,
-			maxTurns: 25,
+			maxTurns: this.maxTurnsFor(routedMode),
 		});
+		const raw = result.finalOutput;
+		const text =
+			typeof raw === "string"
+				? raw
+				: (raw && typeof raw === "object" && "response" in raw
+						? (raw as { response: unknown }).response
+						: String(raw ?? ""));
+		return { response: String(text), mode: "auto" };
 	}
 }

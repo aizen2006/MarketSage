@@ -29,12 +29,12 @@ export function HeroSection() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
           >
-            <div className="inline-flex items-center gap-2 rounded-full border border-border-strong bg-bg-subtle px-3 py-1 text-[13px] font-medium text-fg mb-6 shadow-sm">
-              <span className="flex h-2 w-2 rounded-full bg-accent animate-pulse" />
+            <div className="inline-flex items-center gap-2 rounded-full border border-border-strong bg-bg-surface px-3 py-1 text-[13px] font-medium text-fg mb-6 shadow-soft">
+              <span className="flex h-2 w-2 rounded-full bg-primary animate-pulse" />
               v2.0 is now live
             </div>
             <h1 className="text-balance text-5xl font-semibold tracking-tighter text-fg sm:text-6xl lg:text-7xl leading-[1.1]">
-              Financial intelligence, <span className="text-fg-soft">on tap.</span>
+              Real-time signals. <span className="text-fg-soft">Human-ready insights.</span>
             </h1>
           </motion.div>
 
@@ -54,11 +54,11 @@ export function HeroSection() {
             transition={{ delay: 0.2, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
             className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center lg:justify-start"
           >
-            <Button asChild size="lg" className="w-full sm:w-auto h-12 px-8 text-[15px]">
-              <Link href={CHAT_URL}>Open Chat</Link>
+            <Button asChild size="lg" variant="primary" className="w-full sm:w-auto h-12 px-8 text-[15px]">
+              <Link href={CHAT_URL}>Connect Markets</Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="w-full sm:w-auto h-12 px-8 text-[15px]">
-              <Link href={DOCS_URL}>Read Docs</Link>
+              <Link href={DOCS_URL}>Try Demo Data</Link>
             </Button>
           </motion.div>
         </div>
@@ -69,7 +69,7 @@ export function HeroSection() {
           transition={{ delay: 0.3, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
           className="w-full max-w-[500px] lg:w-1/2"
         >
-          <Card className="relative overflow-hidden border border-border-subtle bg-bg-elevated p-0 shadow-xl">
+          <Card className="relative overflow-hidden border border-border-subtle bg-bg-surface p-0">
             <div className="flex h-10 items-center justify-between border-b border-border-subtle bg-bg px-4">
               <div className="flex items-center gap-2">
                 <div className="h-2.5 w-2.5 rounded-full bg-border-strong" />

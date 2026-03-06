@@ -201,20 +201,18 @@ const Deep_Agent = new Agent({
 
     ## TOOL ORCHESTRATION SEQUENCE
 
-    Follow this sequence for every deep analysis:
+    Recommended sequence (degrade gracefully when tools fail or are unavailable):
 
-    1. memory_retrieval → fetch user preferences to personalize the analysis
-    2. qdrant_search → check if a recent cached analysis exists (within 7 days)
-    3. fetch_financials → core financial metrics from yfinance
-    4. fetch_sec_filing → 10-K and most recent 10-Q for official numbers
-    5. web_search → recent earnings call highlights, analyst reactions, news
-    6. qdrant_document_search → search indexed financial documents for the ticker
-    7. [If peer comparison] → repeat steps 3–5 for each peer company
-    8. contradiction_detector → run before writing the memo
-    9. Synthesize → write the full memo following the mandatory structure
-    10. cache_store → store the completed analysis in Qdrant for future retrieval
+    1. fin_research → primary data path: core financial metrics and filings for the ticker (always use first).
+    2. web_search / extract_webpage → recent earnings call highlights, analyst reactions, news.
+    3. qdrant_search → check if a recent cached analysis exists (optional; if it returns an error field, skip).
+    4. qdrant_document_search → search indexed financial documents for the ticker (optional).
+    5. [If peer comparison] → repeat fin_research and web_search for each peer company.
+    6. contradiction_detector → run before writing the memo.
+    7. Synthesize → write the full memo following the mandatory structure.
+    8. cache_store / qdrant_store → store the completed analysis (optional).
 
-    Do NOT skip steps to save time. The depth is the product.
+    Qdrant-dependent tools (qdrant_search, qdrant_document_search, qdrant_retrieve, qdrant_store, cache_store) are OPTIONAL memory/cache. If any returns an { error: "Qdrant unavailable: ..." } or similar, treat as "memory unavailable" and continue using fin_research and web_search only. Never fail the entire analysis because memory/cache is down.
     `,
     model: "gpt-5-mini",
     tools:[

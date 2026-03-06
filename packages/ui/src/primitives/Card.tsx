@@ -9,8 +9,8 @@ export function Card({ className = "", hoverable = false, ...props }: CardProps)
   return (
     <div
       {...props}
-      className={`rounded-xl border border-border-subtle bg-bg-elevated p-5 text-sm text-fg shadow-sm transition-all duration-200 ${
-        hoverable ? "hover:border-border-strong hover:shadow-md" : ""
+      className={`rounded-lg border border-border-subtle bg-bg-elevated p-5 text-sm text-fg transition-colors duration-150 ${
+        hoverable ? "hover:border-border-strong" : ""
       } ${className}`}
     />
   );

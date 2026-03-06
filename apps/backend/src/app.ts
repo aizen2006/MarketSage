@@ -7,10 +7,28 @@ import { app as payments } from "./modules/payments/index";
 import { app as user } from "./modules/user/index";
 import { app as agents } from "./modules/agents/index";
 
+const defaultAllowedOrigins = [
+	"http://localhost:3001",
+	"http://127.0.0.1:3001",
+	"http://localhost:3000",
+	"http://127.0.0.1:3000",
+];
+
+function resolveAllowedOrigins() {
+	const raw = process.env.CORS_ORIGIN?.trim();
+	if (!raw || raw === "*") return defaultAllowedOrigins;
+	return raw
+		.split(",")
+		.map((origin) => origin.trim())
+		.filter(Boolean);
+}
+
+const allowedOrigins = resolveAllowedOrigins();
+
 export const app = new Elysia()
 	.use(
 		cors({
-			origin: process.env.CORS_ORIGIN || "*",
+			origin: allowedOrigins,
 			credentials: true,
 		}),
 	)

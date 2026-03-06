@@ -1,0 +1,156 @@
+/*
+  MarketSage design tokens — premium finance-agent UI.
+  Dark-first palette, spacing, radius, shadows, typography, motion.
+  Consumed by apps/frontend-chat, apps/landing, apps/docs.
+*/
+
+/* ---------- Palette ---------- */
+:root {
+  /* Light (fallback) */
+  --bg: #ffffff;
+  --bg-surface: #f8fafc;
+  --bg-elevated: #fafafa;
+  --bg-subtle: #f1f5f9;
+  --border-subtle: #e2e8f0;
+  --border-strong: #64748b;
+
+  --fg: #0f172a;
+  --fg-muted: #475569;
+  --fg-soft: #64748b;
+  --fg-inverse: #ffffff;
+
+  --primary: #6d28d9;
+  --primary-soft: #ede9fe;
+  --accent: #06b6d4;
+  --accent-soft: #cffafe;
+  --highlight: #ea580c;
+  --highlight-soft: #ffedd5;
+
+  --danger: #dc2626;
+
+  --shadow-soft: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-elevated: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.dark {
+  /* Dark theme — primary identity */
+  --bg: #0B0F1A;
+  --bg-surface: #0F1724;
+  --bg-elevated: #151c2c;
+  --bg-subtle: #1a2234;
+  --border-subtle: #1e293b;
+  --border-strong: #334155;
+
+  --fg: #E6EEF8;
+  --fg-muted: #9AA7B8;
+  --fg-soft: #6b7a8f;
+  --fg-inverse: #0B0F1A;
+
+  --primary: #7C3AED;
+  --primary-soft: #2e1065;
+  --accent: #22D3EE;
+  --accent-soft: #164e63;
+  --highlight: #F97316;
+  --highlight-soft: #7c2d12;
+
+  --danger: #f87171;
+
+  --shadow-soft: 0 1px 3px rgba(0, 0, 0, 0.2);
+  --shadow-elevated: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+/* Legacy alias for components that use --accent as primary */
+:root {
+  --accent-strong: var(--fg);
+}
+.dark {
+  --accent-strong: var(--fg);
+}
+
+/* ---------- Spacing (Tailwind-ready) ---------- */
+:root {
+  --space-1: 2px;
+  --space-2: 4px;
+  --space-3: 8px;
+  --space-4: 12px;
+  --space-5: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 48px;
+  --space-12: 64px;
+}
+
+/* ---------- Border radius ---------- */
+:root {
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+}
+
+/* ---------- Typography scale (px) ---------- */
+:root {
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-lg: 20px;
+  --text-xl: 28px;
+  --text-2xl: 40px;
+  --text-display: 56px;
+}
+
+/* ---------- Motion ---------- */
+:root {
+  --motion-micro: 0.12s;
+  --motion-macro: 0.28s;
+  --motion-macro-slow: 0.45s;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-elastic: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-micro: 0.01s;
+    --motion-macro: 0.01s;
+    --motion-macro-slow: 0.01s;
+  }
+}
+
+/* Data-mesh flow line animation (disabled when reduced-motion) */
+@keyframes data-mesh-flow {
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: translateX(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(2%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @keyframes data-mesh-flow {
+    0%,
+    100% {
+      opacity: 0.7;
+    }
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse-animate {
+    animation: none !important;
+  }
+}

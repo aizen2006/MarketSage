@@ -50,8 +50,8 @@ export function AuthForm({ mode }: AuthFormProps) {
         aria-labelledby="auth-title"
       >
         <div className="mb-10 flex flex-col items-center text-center">
-          <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl bg-fg text-sm font-bold text-bg shadow-sm">
-            FA
+          <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-sm font-bold text-fg-inverse">
+            MS
           </div>
           <h1
             id="auth-title"
@@ -62,7 +62,7 @@ export function AuthForm({ mode }: AuthFormProps) {
           <p className="mt-3 text-[15px] text-fg-muted">{subtitle}</p>
         </div>
 
-        <div className="rounded-2xl border border-border-subtle bg-bg-elevated p-10 shadow-soft">
+        <div className="rounded-2xl border border-border-subtle bg-bg-surface p-10">
           <form className="flex flex-col items-stretch gap-6" onSubmit={handleSubmit} noValidate>
             {mode === "signup" && (
               <Input

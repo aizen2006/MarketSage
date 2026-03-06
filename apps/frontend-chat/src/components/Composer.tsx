@@ -173,11 +173,11 @@ export function Composer({ onSend, disabled, isEmptyState }: ComposerProps) {
 
   return (
     <div
-      className={`relative w-full max-w-3xl rounded-2xl border transition-all duration-300 bg-bg shadow-sm ${
+      className={`relative w-full max-w-3xl rounded-2xl border transition-all duration-300 bg-bg-surface shadow-soft ${
         focused
-          ? "border-border-strong shadow-lg ring-1 ring-border-strong"
+          ? "border-border-strong ring-1 ring-border-strong"
           : "border-border-subtle"
-      } ${isDragging ? "ring-2 ring-accent border-accent" : ""}`}
+      } ${isDragging ? "ring-1 ring-border-strong border-border-strong" : ""}`}
       aria-label="Message composer"
       onDragEnter={onDragEnter}
       onDragLeave={onDragLeave}
@@ -259,8 +259,8 @@ export function Composer({ onSend, disabled, isEmptyState }: ComposerProps) {
           whileTap={value.trim() && !disabled ? { scale: 0.95 } : {}}
           className={`mb-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl transition-colors ${
             value.trim() && !disabled
-              ? "bg-fg text-bg shadow-md"
-              : "bg-bg-elevated text-fg-soft"
+              ? "bg-primary text-fg-inverse"
+              : "bg-bg-surface text-fg-soft"
           }`}
           aria-label="Send message"
         >

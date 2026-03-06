@@ -14,9 +14,9 @@ export function DocsShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex min-h-screen bg-bg">
-      <aside className="hidden w-64 border-r border-border-subtle bg-bg-subtle/40 px-4 py-4 sm:block">
+      <aside className="hidden w-64 border-r border-border-subtle bg-bg-surface px-4 py-4 sm:block">
         <Link href={LANDING_URL} className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-accent-soft text-xs font-semibold text-accent-strong">
+          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary/20 text-xs font-semibold text-primary">
             MS
           </div>
           <div className="flex flex-col">
@@ -32,9 +32,9 @@ export function DocsShell({ children }: { children: ReactNode }) {
       </aside>
 
       <div className="flex min-h-screen flex-1 flex-col">
-        <header className="flex items-center justify-between border-b border-border-subtle bg-bg/80 px-4 py-3 sm:px-6">
+        <header className="flex items-center justify-between border-b border-border-subtle bg-bg-surface/95 backdrop-blur-md px-4 py-3 sm:px-6">
           <div className="flex items-center gap-2 sm:hidden">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-accent-soft text-xs font-semibold text-accent-strong">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary/20 text-xs font-semibold text-primary">
               MS
             </div>
             <span className="text-sm font-semibold text-fg">API Docs</span>

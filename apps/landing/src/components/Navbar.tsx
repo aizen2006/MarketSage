@@ -39,14 +39,14 @@ export function Navbar() {
       transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
       className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "bg-bg/80 backdrop-blur-xl border-b border-border-subtle shadow-sm"
+          ? "bg-bg-surface/95 backdrop-blur-xl border-b border-border-subtle shadow-soft"
           : "bg-transparent border-b border-transparent"
       }`}
     >
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-2.5 transition-opacity hover:opacity-80">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-fg text-[11px] font-bold text-bg shadow-sm">
-            FA
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-[11px] font-bold text-fg-inverse shadow-soft">
+            MS
           </div>
           <span className="text-[15px] font-semibold tracking-tight text-fg">
             MarketSage

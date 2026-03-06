@@ -11,9 +11,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "FinanceAI Chat",
+  title: "MarketSage Chat",
   description:
-    "A modern finance agent chat interface for analysis, trading, and planning.",
+    "Real-time signals. Human-ready insights. Finance agent for analysis, research, and planning.",
 };
 
 export default function RootLayout({
@@ -22,7 +22,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className="dark" suppressHydrationWarning>
       <body
         className={`${inter.variable} min-h-screen bg-bg text-fg antialiased`}
       >

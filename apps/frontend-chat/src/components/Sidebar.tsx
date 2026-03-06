@@ -57,19 +57,19 @@ export function Sidebar({
 
   return (
     <>
-      <aside className="flex h-full w-full flex-col bg-bg border-r border-border-subtle px-3 py-4 md:max-w-[280px]">
+      <aside className="flex h-full w-full flex-col bg-bg-surface px-3 py-4 md:max-w-[280px]">
         {/* Header Logo & New Chat */}
         <div className="flex items-center justify-between mb-6 px-1">
           <div className="flex items-center gap-3">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-fg text-xs font-bold text-bg shadow-sm">
-              FA
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary text-xs font-bold text-fg-inverse shadow-sm">
+              MS
             </div>
             <div className="flex flex-col">
               <span className="text-[13px] font-semibold tracking-tight text-fg leading-none">
-                FinanceAI
+                MarketSage
               </span>
               <span className="text-[11px] text-fg-soft mt-0.5">
-                Enterprise
+                Finance
               </span>
             </div>
           </div>
@@ -106,12 +106,8 @@ export function Sidebar({
               conversation={conv}
               isActive={conv.id === activeId}
               onClick={() => onSelectConversation(conv.id)}
-              onRename={() => {
-                const nextTitle = window.prompt(
-                  "Rename conversation",
-                  conv.title,
-                );
-                if (nextTitle && nextTitle.trim()) {
+              onRename={(nextTitle) => {
+                if (nextTitle.trim()) {
                   onRenameConversation(conv.id, nextTitle.trim());
                 }
               }}
@@ -167,7 +163,7 @@ export function Sidebar({
             aria-label="User menu"
           >
             <div className="flex items-center gap-2.5">
-              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-accent text-[10px] font-bold text-fg-inverse shrink-0">
+              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-fg-inverse shrink-0">
                 {user?.name?.slice(0, 2).toUpperCase() ?? "?"}
               </div>
               <div className="flex flex-col text-left min-w-0">

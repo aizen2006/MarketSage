@@ -28,7 +28,7 @@ const sizeClasses: Record<Size, string> = {
 };
 
 const variantClasses: Record<Variant, string> = {
-  primary: "bg-accent text-fg-inverse shadow-[0_1px_2px_rgba(0,0,0,0.12)] hover:bg-accent/90 dark:shadow-[0_1px_2px_rgba(255,255,255,0.1)]",
+  primary: "bg-primary text-fg-inverse shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:bg-primary/90 dark:shadow-[0_1px_2px_rgba(0,0,0,0.3)]",
   secondary: "bg-bg-subtle text-fg hover:bg-border-subtle",
   ghost:
     "bg-transparent text-fg-soft hover:text-fg hover:bg-bg-subtle",

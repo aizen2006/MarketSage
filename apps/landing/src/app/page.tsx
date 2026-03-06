@@ -9,7 +9,7 @@ import { Footer } from "../components/Footer";
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-bg-subtle/60 to-bg">
+    <div className="min-h-screen bg-bg">
       <Navbar />
       <main className="mx-auto max-w-6xl px-6 py-10 sm:py-14">
         <HeroSection />

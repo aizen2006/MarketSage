@@ -229,12 +229,23 @@ export function useChatState() {
           };
         });
       } catch (error) {
+        const backendMessage =
+          error instanceof Error ? error.message : "Analysis failed.";
         console.error("sendMessage error", error);
         setState((prev) => {
           const current = prev.messagesById[conversationId] ?? [];
           const updated: Message[] = current.map((m): Message =>
             m.id === userMessage.id ? { ...m, status: "error" } : m,
           );
+          const errorReply: Message = {
+            id: "agent-error-" + Date.now(),
+            conversationId,
+            role: "agent",
+            content: `Analysis failed: ${backendMessage}`,
+            createdAt: new Date().toISOString(),
+            status: "sent",
+          };
+          updated.push(errorReply);
           return {
             ...prev,
             messagesById: {

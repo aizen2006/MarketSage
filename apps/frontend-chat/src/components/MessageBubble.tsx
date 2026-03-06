@@ -25,8 +25,8 @@ export function MessageBubble({ message }: MessageBubbleProps) {
       {...messageEnter}
     >
       {isAgent && (
-        <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-fg text-[11px] font-bold text-bg shadow-sm">
-          FA
+        <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-[11px] font-bold text-fg-inverse shadow-soft">
+          MS
         </div>
       )}
 
@@ -36,10 +36,10 @@ export function MessageBubble({ message }: MessageBubbleProps) {
         }`}
       >
         <div
-          className={`rounded-2xl px-5 py-4 text-[15px] leading-relaxed shadow-sm ${
+          className={`rounded-2xl px-5 py-4 text-[15px] leading-relaxed shadow-soft ${
             isAgent
-              ? "bg-bg-elevated border border-border-subtle text-fg"
-              : "bg-fg text-bg"
+              ? "bg-bg-surface border border-border-subtle text-fg"
+              : "bg-primary text-fg-inverse"
           }`}
         >
           {isAgent ? (
@@ -75,7 +75,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
       </div>
 
       {!isAgent && (
-        <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-bg-elevated border border-border-subtle text-[11px] font-bold text-fg-soft">
+        <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-bg-surface border border-border-subtle text-[11px] font-bold text-fg-muted">
           YOU
         </div>
       )}
