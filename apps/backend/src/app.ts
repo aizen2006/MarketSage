@@ -10,6 +10,7 @@ export const app = new Elysia()
 	.use(
 		cors({
 			origin: process.env.CORS_ORIGIN || "*",
+			credentials: true,
 		}),
 	)
 	.get("/health", () => ({ status: "ok" }))

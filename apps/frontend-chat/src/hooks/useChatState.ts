@@ -18,6 +18,8 @@ const EMPTY_STATE: ConversationsState = {
   activeId: null,
 };
 
+export type ChatMode = "quick" | "deep" | "auto";
+
 export function useChatState() {
   const [state, setState] = useState<ConversationsState>(EMPTY_STATE);
   const [isTyping, setIsTyping] = useState(false);
@@ -26,12 +28,39 @@ export function useChatState() {
     const stored = loadConversations<ConversationsState>();
     if (stored) {
       setState(stored);
-    } else {
+      return;
+    }
+
+    const API_BASE =
+      process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000";
+
+    async function bootstrapFromBackend() {
+      try {
+        const res = await fetch(`${API_BASE}/user/conversations`, {
+          credentials: "include",
+        });
+        if (!res.ok) throw new Error("Failed to load conversations");
+        const data = (await res.json()) as {
+          conversations: Conversation[];
+        };
+        if (data.conversations && data.conversations.length) {
+          const first = data.conversations[0];
+          setState({
+            conversations: data.conversations,
+            messagesById: {},
+            activeId: first.id,
+          });
+          return;
+        }
+      } catch {
+        // fall back to local seed
+      }
+
       const initialId = uuid();
       const initialConv: Conversation = {
         id: initialId,
-        title: "BTC Market Analysis",
-        lastMessagePreview: "The current support level for BTC…",
+        title: "New conversation",
+        lastMessagePreview: "Start by asking about your portfolio…",
         updatedAt: new Date().toISOString(),
         unreadCount: 0,
       };
@@ -43,6 +72,8 @@ export function useChatState() {
         activeId: initialId,
       });
     }
+
+    void bootstrapFromBackend();
   }, []);
 
   useEffect(() => {
@@ -124,7 +155,7 @@ export function useChatState() {
   }, []);
 
   const sendMessage = useCallback(
-    async (content: string) => {
+    async (content: string, mode: ChatMode = "auto") => {
       if (!state.activeId || !content.trim()) return;
       const conversationId = state.activeId;
       const now = new Date().toISOString();
@@ -164,6 +195,7 @@ export function useChatState() {
         const agentMessage = await mockSendMessage({
           conversationId,
           content,
+          mode,
         });
         setState((prev) => {
           const current = prev.messagesById[conversationId] ?? [];
@@ -196,7 +228,8 @@ export function useChatState() {
             activeId: prev.activeId,
           };
         });
-      } catch {
+      } catch (error) {
+        console.error("sendMessage error", error);
         setState((prev) => {
           const current = prev.messagesById[conversationId] ?? [];
           const updated: Message[] = current.map((m): Message =>

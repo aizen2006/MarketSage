@@ -7,9 +7,17 @@ import { IconButton } from "@repo/ui";
 
 const MODES = ["Quick", "Deep", "Auto"] as const;
 
-export function Header({ onToggleSidebar }: { onToggleSidebar?: () => void }) {
+type HeaderProps = {
+  onToggleSidebar?: () => void;
+  mode: "quick" | "deep" | "auto";
+  onModeChange?: (mode: "quick" | "deep" | "auto") => void;
+};
+
+export function Header({ onToggleSidebar, mode, onModeChange }: HeaderProps) {
   const [activeMode, setActiveMode] =
-    useState<(typeof MODES)[number]>("Quick");
+    useState<(typeof MODES)[number]>(
+      mode === "deep" ? "Deep" : mode === "auto" ? "Auto" : "Quick",
+    );
 
   return (
     <header className="flex h-14 items-center justify-between gap-3 border-b border-border-subtle bg-bg/80 backdrop-blur-md px-4 md:px-6">
@@ -37,7 +45,16 @@ export function Header({ onToggleSidebar }: { onToggleSidebar?: () => void }) {
                 type="button"
                 role="tab"
                 aria-selected={isActive}
-                onClick={() => setActiveMode(mode)}
+                onClick={() => {
+                  setActiveMode(mode);
+                  const next =
+                    mode === "Quick"
+                      ? "quick"
+                      : mode === "Deep"
+                        ? "deep"
+                        : "auto";
+                  onModeChange?.(next);
+                }}
                 className={`relative z-10 rounded-lg px-3 py-1.5 text-[13px] font-medium transition-colors ${
                   isActive
                     ? "text-fg"

@@ -56,24 +56,28 @@ export const fin_research = tool({
 		]),
 		symbol: z
 			.string()
-			.optional()
-			.describe("Ticker symbol, e.g. AAPL (required for most actions)"),
+			.nullable()
+			.describe("Ticker symbol, e.g. AAPL (required for most actions, null for search)"),
 		query: z
 			.string()
-			.optional()
-			.describe("Free-text search query (required for `search` action)"),
+			.nullable()
+			.describe("Free-text search query (required for search action, null otherwise)"),
 		period: z
 			.enum(["annual", "quarter"])
-			.optional()
+			.nullable()
 			.describe(
-				"Reporting period for financial statements (annual or quarter). Defaults to annual when omitted.",
+				"Reporting period for financial statements (annual or quarter). null defaults to annual.",
 			),
 		limit: z
 			.number()
-			.optional()
-			.describe("Maximum number of records to return (FMP default when omitted)."),
+			.nullable()
+			.describe("Maximum number of records to return (null for FMP default)."),
 	}),
-	async execute({ action, symbol, query, period, limit }) {
+	async execute({ action, symbol: rawSymbol, query: rawQuery, period: rawPeriod, limit: rawLimit }) {
+		const symbol = rawSymbol ?? undefined;
+		const query = rawQuery ?? undefined;
+		const period = rawPeriod ?? undefined;
+		const limit = rawLimit ?? undefined;
 		switch (action) {
 			case "search": {
 				if (!query) {

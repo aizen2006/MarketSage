@@ -6,7 +6,7 @@ import { Sidebar } from "../../components/Sidebar";
 import { Header } from "../../components/Header";
 import { ChatWindow } from "../../components/ChatWindow";
 import { Composer } from "../../components/Composer";
-import { useChatState } from "../../hooks/useChatState";
+import { useChatState, type ChatMode } from "../../hooks/useChatState";
 
 export default function ChatPage() {
   const {
@@ -23,6 +23,7 @@ export default function ChatPage() {
   } = useChatState();
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [mode, setMode] = useState<ChatMode>("quick");
 
   return (
     <AuthGuard>
@@ -46,14 +47,18 @@ export default function ChatPage() {
         </div>
 
         <div className="flex flex-1 flex-col">
-          <Header onToggleSidebar={() => setSidebarOpen((open) => !open)} />
+          <Header
+            onToggleSidebar={() => setSidebarOpen((open) => !open)}
+            mode={mode}
+            onModeChange={setMode}
+          />
           <ChatWindow
             activeConversation={activeConversation}
             messages={activeMessages}
             isTyping={isTyping}
           >
             <Composer
-              onSend={sendMessage}
+              onSend={(content) => sendMessage(content, mode)}
               disabled={!activeConversation}
               isEmptyState={!activeMessages.length}
             />

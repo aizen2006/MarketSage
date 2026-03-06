@@ -39,11 +39,16 @@ export const app = new Elysia({ prefix: "/agents" })
 				}
 
 				await runStream.completed;
-			} catch {
+			} catch (e) {
+				console.error("Auto agent stream error", e);
+				const message =
+					e instanceof Error
+						? e.message
+						: "Error while streaming auto chat";
 				yield sse({
 					event: "error",
 					data: {
-						message: "Error while streaming auto chat",
+						message,
 					},
 				});
 			}
@@ -68,11 +73,16 @@ export const app = new Elysia({ prefix: "/agents" })
 				}
 
 				await runStream.completed;
-			} catch {
+			} catch (e) {
+				console.error("Quick agent stream error", e);
+				const message =
+					e instanceof Error
+						? e.message
+						: "Error while streaming quick chat";
 				yield sse({
 					event: "error",
 					data: {
-						message: "Error while streaming quick chat",
+						message,
 					},
 				});
 			}
@@ -97,11 +107,16 @@ export const app = new Elysia({ prefix: "/agents" })
 				}
 
 				await runStream.completed;
-			} catch {
+			} catch (e) {
+				console.error("Deep agent stream error", e);
+				const message =
+					e instanceof Error
+						? e.message
+						: "Error while streaming deep chat";
 				yield sse({
 					event: "error",
 					data: {
-						message: "Error while streaming deep chat",
+						message,
 					},
 				});
 			}

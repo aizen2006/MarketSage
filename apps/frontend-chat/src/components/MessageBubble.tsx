@@ -1,6 +1,8 @@
 "use client";
 
 import { motion } from "motion/react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import type { Message } from "../types/chat";
 import { messageEnter } from "../lib/motion";
 
@@ -27,23 +29,31 @@ export function MessageBubble({ message }: MessageBubbleProps) {
           FA
         </div>
       )}
-      
+
       <div
         className={`relative flex max-w-[85%] flex-col gap-1 ${
           isAgent ? "items-start" : "items-end"
         }`}
       >
         <div
-          className={`rounded-2xl px-4 py-3 text-[15px] leading-relaxed shadow-sm ${
+          className={`rounded-2xl px-5 py-4 text-[15px] leading-relaxed shadow-sm ${
             isAgent
               ? "bg-bg-elevated border border-border-subtle text-fg"
               : "bg-fg text-bg"
           }`}
         >
-          <p className="whitespace-pre-wrap">{message.content}</p>
+          {isAgent ? (
+            <div className="agent-markdown max-w-none">
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                {message.content}
+              </ReactMarkdown>
+            </div>
+          ) : (
+            <p className="whitespace-pre-wrap">{message.content}</p>
+          )}
         </div>
-        
-        <div 
+
+        <div
           className={`flex items-center gap-2 text-[11px] text-fg-soft opacity-0 transition-opacity group-hover:opacity-100 ${
             isAgent ? "pl-1" : "pr-1 flex-row-reverse"
           }`}
@@ -51,7 +61,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
           <span>{timeLabel}</span>
           {message.status && !isAgent && (
             <>
-              <span>•</span>
+              <span>&bull;</span>
               <span>
                 {message.status === "sending" && "Sending..."}
                 {message.status === "sent" && "Delivered"}

@@ -5,13 +5,15 @@ import Deep_Agent from "agents/deep_agent";
 
 type ChatMode = "auto" | "quick" | "deep";
 
-export abstract class AgentsService {
-	private static getAgent(mode: ChatMode) {
-		if (mode === "quick") return Quick_Agent;
-		if (mode === "deep") return Deep_Agent;
+interface TriageDecision {
+	mode: "quick" | "deep";
+	context_note?: string;
+}
 
-		// default: auto / triage
-		return Triage_Agent;
+export abstract class AgentsService {
+	private static getAgent(mode: "quick" | "deep") {
+		if (mode === "quick") return Quick_Agent;
+		return Deep_Agent;
 	}
 
 	static async streamChat(
@@ -19,13 +21,40 @@ export abstract class AgentsService {
 		message: string,
 		context: { userId?: string | number },
 	): Promise<StreamedRunResult<any, any>> {
-		const agent = this.getAgent(mode);
+		if (mode === "quick" || mode === "deep") {
+			return run(this.getAgent(mode), message, {
+				stream: true,
+				context,
+				maxTurns: 25,
+			});
+		}
 
-		const stream = await run(agent, message, {
-			stream: true,
+		// Auto mode: run triage first (non-streaming) to get routing decision,
+		// then stream the chosen sub-agent.
+		const triageResult = await run(Triage_Agent, message, {
 			context,
+			maxTurns: 25,
 		});
 
-		return stream;
+		let routedMode: "quick" | "deep" = "quick";
+		let augmentedMessage = message;
+
+		try {
+			const raw = triageResult.finalOutput;
+			const parsed: TriageDecision =
+				typeof raw === "string" ? JSON.parse(raw) : raw;
+			routedMode = parsed.mode === "deep" ? "deep" : "quick";
+			if (parsed.context_note) {
+				augmentedMessage = `${message}\n\n[Routing context: ${parsed.context_note}]`;
+			}
+		} catch {
+			// If triage output can't be parsed, default to quick
+		}
+
+		return run(this.getAgent(routedMode), augmentedMessage, {
+			stream: true,
+			context,
+			maxTurns: 25,
+		});
 	}
 }

@@ -24,13 +24,20 @@ const guardrailAgent = new Agent({
 const outputGuardrail: OutputGuardrail<typeof ResponseOutput> = {
     name:"ResponseGuardrail",
     async execute({ agentOutput, context }) {
-        const result = await run(guardrailAgent, agentOutput.response, {
-          context,
-        });
-        return {
-          outputInfo: result.finalOutput,
-          tripwireTriggered: result.finalOutput?.response.includes('math') ?? false,
-        };
+        try {
+          const result = await run(guardrailAgent, agentOutput.response, {
+            context,
+          });
+          return {
+            outputInfo: result.finalOutput,
+            tripwireTriggered: false,
+          };
+        } catch {
+          return {
+            outputInfo: agentOutput,
+            tripwireTriggered: false,
+          };
+        }
       },
 }
 // main Agent

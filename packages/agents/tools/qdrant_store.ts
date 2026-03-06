@@ -10,29 +10,35 @@ export const qdrant_store = tool({
 		text: z.string().describe("Text content to embed and store"),
 		payload: z
 			.record(z.string())
-			.optional()
-			.describe("Additional metadata key-value pairs to attach"),
+			.nullable()
+			.describe("Additional metadata key-value pairs to attach (null if none)"),
 	}),
-	execute: async ({ collection, text, payload }) => {
-		await ensureCollection(collection);
+	execute: async ({ collection, text, payload: rawPayload }) => {
+		try {
+			const payload = rawPayload ?? undefined;
+			await ensureCollection(collection);
 
-		const vector = await embedQuery(text);
-		const id = crypto.randomUUID();
+			const vector = await embedQuery(text);
+			const id = crypto.randomUUID();
 
-		await client.upsert(collection, {
-			points: [
-				{
-					id,
-					vector,
-					payload: {
-						text,
-						stored_at: new Date().toISOString(),
-						...payload,
+			await client.upsert(collection, {
+				points: [
+					{
+						id,
+						vector,
+						payload: {
+							text,
+							stored_at: new Date().toISOString(),
+							...payload,
+						},
 					},
-				},
-			],
-		});
+				],
+			});
 
-		return { status: "stored", id, collection };
+			return { status: "stored", id, collection };
+		} catch (e) {
+			const message = e instanceof Error ? e.message : String(e);
+			return { error: `Qdrant unavailable: ${message}` };
+		}
 	},
 });
