@@ -14,7 +14,8 @@ bun run src/index.ts
 
 The server listens on `API_PORT` or defaults to `4001`:
 
-- `http://localhost:4001`
+- Local development: `http://localhost:4001`
+- Deployed (Render): `https://marketsage-eklj.onrender.com`
 
 ## Authentication
 
@@ -121,7 +122,7 @@ On error (including insufficient credits), the stream yields an event:
 ### JSON (Node / fetch)
 
 ```ts
-await fetch("http://localhost:4001/v1/agents/quick", {
+await fetch("https://marketsage-eklj.onrender.com/v1/agents/quick", {
 	method: "POST",
 	headers: {
 		"content-type": "application/json",
@@ -137,7 +138,7 @@ await fetch("http://localhost:4001/v1/agents/quick", {
 
 ```ts
 const source = new EventSource(
-	`http://localhost:4001/v1/agents/quick/stream?prompt=${encodeURIComponent(
+	`https://marketsage-eklj.onrender.com/v1/agents/quick/stream?prompt=${encodeURIComponent(
 		"Stream a quick market overview.",
 	)}`,
 );
