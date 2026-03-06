@@ -14,12 +14,23 @@ export const apiKeyAuth = new Elysia({ name: "apiKeyAuth" }).resolve(
 			});
 		}
 
-		const keyRecord = await prisma.apikeys.findFirst({
-			where: {
-				key: apiKey,
-				disabled: false,
-			},
-		});
+		let keyRecord;
+		try {
+			keyRecord = await prisma.apikeys.findFirst({
+				where: {
+					key: apiKey,
+					disabled: false,
+				},
+			});
+		} catch (e) {
+			console.error("API key lookup failed due to database error:", e);
+			throw status(503, {
+				error: {
+					code: "DB_UNAVAILABLE",
+					message: "Database unavailable. Please try again later.",
+				},
+			});
+		}
 
 		if (!keyRecord) {
 			throw status(401, {
@@ -35,5 +46,5 @@ export const apiKeyAuth = new Elysia({ name: "apiKeyAuth" }).resolve(
 			apiKeyId: keyRecord.id,
 		};
 	},
-).as('global');
+).as("global");
 

@@ -16,6 +16,7 @@ export const app = new Elysia()
 			return { status: "ok" };
 		} catch (e) {
 			const message = e instanceof Error ? e.message : "Database unreachable";
+			console.error("API backend DB health check failed:", e);
 			set.status = 503;
 			return {
 				status: "error",
