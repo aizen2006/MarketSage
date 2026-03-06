@@ -381,13 +381,8 @@ export default function ApiKeysPage() {
                         initial={{ opacity: 0, y: 6 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.05 + index * 0.02, duration: 0.18 }}
-                        whileHover={{
-                          y: -1,
-                          scale: 1.01,
-                          boxShadow:
-                            "0 18px 45px rgba(15,23,42,0.35)",
-                        }}
-                        className="flex items-center justify-between rounded-lg border border-border-subtle bg-bg-surface px-3.5 py-3 text-xs transition-transform hover:border-border-strong"
+                        whileHover={{ y: -1 }}
+                        className="flex flex-col gap-3 rounded-lg border border-border-subtle bg-bg-surface px-3.5 py-3 text-xs transition-colors hover:border-border-strong sm:flex-row sm:items-center sm:justify-between"
                       >
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2">
@@ -408,12 +403,12 @@ export default function ApiKeysPage() {
                             Created {formatDate((key as any).createdAt ?? null)}
                           </p>
                         </div>
-                        <div className="ml-3 flex items-center gap-2">
+                        <div className="flex items-center gap-1.5 self-end sm:self-auto">
                           <Button
                             size="xs"
                             variant="ghost"
                             onClick={() => handleUseInExamples(key)}
-                            className="text-[11px]"
+                            className="h-7 px-2.5 text-[11px] whitespace-nowrap"
                           >
                             Use in examples
                           </Button>
@@ -422,6 +417,7 @@ export default function ApiKeysPage() {
                             variant="ghost"
                             onClick={() => handleCopyMasked(key)}
                             aria-label="Copy masked key"
+                            className="h-7 w-7"
                           >
                             {copiedKeyId === key.id ? (
                               <span className="text-[10px] font-medium">
@@ -454,7 +450,7 @@ export default function ApiKeysPage() {
                             size="xs"
                             variant={key.disabled ? "secondary" : "ghost"}
                             onClick={() => handleToggleKey(key)}
-                            className="text-[11px]"
+                            className="h-7 min-w-16 px-2.5 text-[11px]"
                           >
                             {key.disabled ? "Enable" : "Disable"}
                           </Button>
@@ -472,8 +468,8 @@ export default function ApiKeysPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.08, duration: 0.25 }}
             >
-              <Card className="space-y-3 border border-border-subtle/80 bg-bg/80 backdrop-blur-sm">
-                <div className="flex items-center justify-between gap-2">
+              <Card className="space-y-4 border border-border-subtle/80 bg-bg/80 backdrop-blur-sm">
+                <div className="flex flex-col gap-3">
                   <div>
                     <h2 className="text-sm font-semibold text-fg">
                       API reference
@@ -482,13 +478,13 @@ export default function ApiKeysPage() {
                       Call your agents securely using the key from this page.
                     </p>
                   </div>
-                  <span className="rounded-full bg-bg-subtle px-2 py-0.5 text-[10px] font-mono text-fg-soft">
+                  <span className="inline-flex w-fit max-w-full items-center rounded-full border border-border-subtle bg-bg-subtle px-3 py-1 text-[10px] font-mono text-fg-soft">
                     {API_BACKEND_BASE}
                   </span>
                 </div>
 
                 <div>
-                  <div className="mb-3 inline-flex rounded-full bg-bg-subtle p-1 text-xs">
+                  <div className="mb-3 inline-flex rounded-full border border-border-subtle bg-bg-subtle p-1 text-xs">
                     <button
                       type="button"
                       onClick={() => setActiveTab("curl")}
@@ -528,7 +524,7 @@ export default function ApiKeysPage() {
                     initial={{ opacity: 0, y: 3 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.18 }}
-                    className="max-h-80 overflow-auto rounded-lg border border-border-subtle bg-bg-subtle p-3 text-xs font-mono text-fg shadow-sm"
+                    className="max-h-88 overflow-x-auto overflow-y-auto rounded-lg border border-border-subtle bg-bg-subtle p-4 text-[12px] leading-6 font-mono text-fg shadow-sm"
                   >
                     {snippet}
                   </motion.pre>
