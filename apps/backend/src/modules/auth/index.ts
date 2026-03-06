@@ -49,6 +49,8 @@ export const app = new Elysia({prefix: "/auth"})
                 value: token,
                 httpOnly: true,
                 maxAge: 60 * 60 * 24 * 7,
+				sameSite: "none",
+				secure: true,
             })
             return { message: "SignIn successful" }
         } catch (e: unknown) {
