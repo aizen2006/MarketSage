@@ -8,6 +8,12 @@ export const AgentsModel = {
 	chatBodySchema: t.Object({
 		message: t.String(),
 	}),
+	titleBodySchema: t.Object({
+		message: t.String(),
+	}),
+	titleResponseSchema: t.Object({
+		title: t.String(),
+	}),
 } as const;
 
 export type AgentsModel = {

@@ -1,9 +1,15 @@
-import { run } from "@openai/agents";
+import { Agent, run } from "@openai/agents";
 import Triage_Agent from "agents/triage_agent";
 import Quick_Agent from "agents/quick_agent";
 import Deep_Agent from "agents/deep_agent";
 
 type ChatMode = "auto" | "quick" | "deep";
+
+const Title_Agent = Agent.create({
+	name: "titleAgent",
+	instructions: `You generate very short conversation titles for a finance chat app. Given the user's first message, reply with ONLY a 3-6 word title. No quotes, no punctuation at the end, no explanation. Examples: "AAPL revenue last quarter", "Compare NVDA and AMD", "Portfolio risk overview".`,
+	model: "gpt-4o-mini",
+});
 
 interface TriageDecision {
 	mode: "quick" | "deep";
@@ -82,5 +88,19 @@ export abstract class AgentsService {
 						? (raw as { response: unknown }).response
 						: String(raw ?? ""));
 		return { response: String(text), mode: "auto" };
+	}
+
+	static async generateTitle(firstMessage: string): Promise<string> {
+		const result = await run(Title_Agent as any, firstMessage, {
+			maxTurns: 1,
+		});
+		const raw = result.finalOutput;
+		const title =
+			typeof raw === "string"
+				? raw
+				: raw != null && typeof raw === "object" && "response" in (raw as object)
+					? String((raw as { response: unknown }).response)
+					: String(raw ?? "New conversation");
+		return title.trim().slice(0, 80) || "New conversation";
 	}
 }

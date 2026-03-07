@@ -52,12 +52,21 @@ export function Composer({ onSend, disabled, isEmptyState }: ComposerProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const showSuggestions = focused && value.trim().length > 0;
+  const showSuggestions = focused;
 
   const filteredSuggestions = useMemo(() => {
-    const q = value.toLowerCase();
+    const q = value.trim().toLowerCase();
+    if (!q) return SUGGESTIONS.slice(0, 4);
     return SUGGESTIONS.filter((s) => s.toLowerCase().includes(q)).slice(0, 4);
   }, [value]);
+
+  useEffect(() => {
+    setActiveSuggestion((prev) => {
+      if (filteredSuggestions.length === 0) return null;
+      if (prev === null) return 0;
+      return prev >= filteredSuggestions.length ? 0 : prev;
+    });
+  }, [filteredSuggestions.length]);
 
   const addFiles = useCallback((files: FileList | null) => {
     if (!files?.length) return;
@@ -114,6 +123,17 @@ export function Composer({ onSend, disabled, isEmptyState }: ComposerProps) {
 
   function handleKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
     if (event.key === "Enter" && !event.shiftKey) {
+      if (
+        showSuggestions &&
+        filteredSuggestions.length > 0 &&
+        activeSuggestion !== null
+      ) {
+        event.preventDefault();
+        const suggestion = filteredSuggestions[activeSuggestion];
+        setValue(suggestion);
+        setActiveSuggestion(null);
+        return;
+      }
       event.preventDefault();
       handleSend();
       return;
@@ -271,37 +291,46 @@ export function Composer({ onSend, disabled, isEmptyState }: ComposerProps) {
       <AnimatePresence>
         {showSuggestions && filteredSuggestions.length > 0 && (
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-            className="absolute bottom-[calc(100%+12px)] left-0 z-50 w-full rounded-xl border border-border-subtle bg-bg-elevated p-1.5 shadow-xl backdrop-blur-md"
+            exit={{ opacity: 0, y: 8 }}
+            className="absolute bottom-[calc(100%+12px)] left-0 right-0 z-50 w-full"
             role="listbox"
-            aria-label="Smart suggestions"
+            aria-label="Suggested prompts"
           >
-            {filteredSuggestions.map((suggestion, index) => {
-              const selected = index === activeSuggestion;
-              return (
-                <button
-                  key={suggestion}
-                  type="button"
-                  role="option"
-                  aria-selected={selected}
-                  className={`flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-[13px] transition-colors ${
-                    selected
-                      ? "bg-bg-subtle text-fg"
-                      : "text-fg-muted hover:bg-bg-subtle hover:text-fg"
-                  }`}
-                  onMouseDown={(e) => {
-                    e.preventDefault();
-                    setValue(suggestion);
-                    setActiveSuggestion(index);
-                  }}
-                >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 opacity-50"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
-                  <span className="truncate">{suggestion}</span>
-                </button>
-              );
-            })}
+            {isEmptyState && !value.trim() && (
+              <p className="mb-2 text-[13px] text-fg-muted">
+                Upload a PDF or paste a ticker to get started.
+              </p>
+            )}
+            <div className="rounded-2xl border border-border-subtle bg-white p-2 shadow-lg dark:bg-bg-elevated dark:shadow-xl">
+              {filteredSuggestions.map((suggestion, index) => {
+                const selected = index === activeSuggestion;
+                return (
+                  <button
+                    key={suggestion}
+                    type="button"
+                    role="option"
+                    aria-selected={selected}
+                    className={`flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-left text-[13px] transition-colors ${
+                      selected
+                        ? "bg-bg-subtle text-fg"
+                        : "text-fg-muted hover:bg-bg-subtle hover:text-fg"
+                    }`}
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      setValue(suggestion);
+                      setActiveSuggestion(index);
+                    }}
+                  >
+                    <span className="flex h-5 w-5 shrink-0 items-center justify-center text-fg-soft" aria-hidden>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3z"/><path d="M5 21l2.5-7.5L15 11l-7.5 2.5L5 21z"/><path d="M19 21l-2.5-7.5L9 11l7.5 2.5L19 21z"/></svg>
+                    </span>
+                    <span className="truncate">{suggestion}</span>
+                  </button>
+                );
+              })}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

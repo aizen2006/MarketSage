@@ -39,6 +39,43 @@ export const UserModel = {
 			}),
 		),
 	}),
+	createConversationBodySchema: t.Object({
+		title: t.Optional(t.String()),
+	}),
+	createConversationResponseSchema: t.Object({
+		id: t.String(),
+		title: t.String(),
+		lastMessagePreview: t.String(),
+		updatedAt: t.String(),
+		unreadCount: t.Number(),
+	}),
+	patchConversationBodySchema: t.Object({
+		title: t.String(),
+	}),
+	getInsightsResponseSchema: t.Object({
+		signals: t.Array(
+			t.Object({
+				id: t.String(),
+				title: t.String(),
+				value: t.String(),
+				valueTrend: t.Union([
+					t.Literal("positive"),
+					t.Literal("negative"),
+					t.Literal("neutral"),
+				]),
+				confidence: t.Number(),
+				sparklineData: t.Array(t.Number()),
+				isNew: t.Boolean(),
+			}),
+		),
+		insights: t.Array(
+			t.Object({
+				id: t.String(),
+				title: t.String(),
+				summary: t.String(),
+			}),
+		),
+	}),
 } as const;
 
 export type UserModel = {

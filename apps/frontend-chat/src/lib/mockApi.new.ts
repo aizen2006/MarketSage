@@ -144,6 +144,60 @@ async function fetchAgentReply(
   return "No response received from agent.";
 }
 
+/** Fetch a short AI-generated conversation title from the first user message. */
+export async function fetchConversationTitle(firstMessage: string): Promise<string> {
+  const res = await fetch(`${API_BASE}/agents/title`, {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: firstMessage }),
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    const msg = data?.error?.message ?? "Title generation failed";
+    throw new Error(msg);
+  }
+  return typeof data?.title === "string" ? data.title.trim().slice(0, 80) : "New conversation";
+}
+
+export async function createConversationApi(title: string = "New conversation"): Promise<{
+  id: string;
+  title: string;
+  lastMessagePreview: string;
+  updatedAt: string;
+  unreadCount: number;
+} | null> {
+  try {
+    const res = await fetch(`${API_BASE}/user/conversations`, {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title }),
+    });
+    if (!res.ok) return null;
+    return res.json();
+  } catch {
+    return null;
+  }
+}
+
+export async function updateConversationTitleApi(
+  conversationId: string,
+  title: string,
+): Promise<boolean> {
+  try {
+    const res = await fetch(`${API_BASE}/user/conversations/${conversationId}`, {
+      method: "PATCH",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title }),
+    });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
 export async function mockSendMessage(params: {
   conversationId: string;
   content: string;

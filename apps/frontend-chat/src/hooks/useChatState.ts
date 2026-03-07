@@ -4,7 +4,12 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { v4 as uuid } from "uuid";
 import type { Conversation, Message } from "../types/chat";
 import { loadConversations, saveConversations } from "../lib/storage";
-import { mockSendMessage } from "../lib/mockApi";
+import {
+  mockSendMessage,
+  fetchConversationTitle,
+  createConversationApi,
+  updateConversationTitleApi,
+} from "../lib/mockApi";
 
 type ConversationsState = {
   conversations: Conversation[];
@@ -105,7 +110,28 @@ export function useChatState() {
     }));
   }, []);
 
-  const createConversation = useCallback(() => {
+  const createConversation = useCallback(async () => {
+    const created = await createConversationApi("New conversation");
+    if (created) {
+      setState((prev) => ({
+        conversations: [
+          {
+            id: created.id,
+            title: created.title,
+            lastMessagePreview: created.lastMessagePreview,
+            updatedAt: created.updatedAt,
+            unreadCount: created.unreadCount,
+          },
+          ...prev.conversations,
+        ],
+        messagesById: {
+          [created.id]: [],
+          ...prev.messagesById,
+        },
+        activeId: created.id,
+      }));
+      return;
+    }
     setState((prev) => {
       const id = uuid();
       const now = new Date().toISOString();
@@ -134,6 +160,7 @@ export function useChatState() {
         c.id === id ? { ...c, title } : c,
       ),
     }));
+    void updateConversationTitleApi(id, title);
   }, []);
 
   const deleteConversation = useCallback((id: string) => {
@@ -158,6 +185,8 @@ export function useChatState() {
     async (content: string, mode: ChatMode = "auto") => {
       if (!state.activeId || !content.trim()) return;
       const conversationId = state.activeId;
+      const wasFirstMessage =
+        (state.messagesById[conversationId] ?? []).length === 0;
       const now = new Date().toISOString();
       const userMessage: Message = {
         id: uuid(),
@@ -228,6 +257,22 @@ export function useChatState() {
             activeId: prev.activeId,
           };
         });
+        if (wasFirstMessage) {
+          const conv = state.conversations.find((c) => c.id === conversationId);
+          if (conv?.title === "New conversation") {
+            fetchConversationTitle(content.trim())
+              .then((title) => {
+                setState((prev) => ({
+                  ...prev,
+                  conversations: prev.conversations.map((c) =>
+                    c.id === conversationId ? { ...c, title } : c,
+                  ),
+                }));
+                void updateConversationTitleApi(conversationId, title);
+              })
+              .catch(() => {});
+          }
+        }
       } catch (error) {
         const backendMessage =
           error instanceof Error ? error.message : "Analysis failed.";

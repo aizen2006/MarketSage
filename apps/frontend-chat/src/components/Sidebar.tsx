@@ -1,6 +1,13 @@
 "use client";
 
-import { useMemo, useState, useRef, useEffect } from "react";
+import {
+  useMemo,
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  KeyboardEvent,
+} from "react";
 import { motion, AnimatePresence } from "motion/react";
 import Link from "next/link";
 import type { Conversation } from "../types/chat";
@@ -9,6 +16,17 @@ import { ConfirmDialog } from "./ConfirmDialog";
 import { Button, IconButton } from "@repo/ui";
 import { useAuth } from "../context/AuthContext";
 
+const QUICK_PROMPTS = [
+  "Summarize my portfolio performance over the last 30 days.",
+  "Analyze my P&L and highlight biggest contributors.",
+  "Assess my current risk exposure vs target.",
+  "Suggest a rebalance strategy for this week.",
+];
+
+type SuggestionItem =
+  | { type: "conversation"; conv: Conversation }
+  | { type: "prompt"; text: string };
+
 interface SidebarProps {
   conversations: Conversation[];
   activeId: string | null;
@@ -16,7 +34,11 @@ interface SidebarProps {
   onCreateConversation: () => void;
   onRenameConversation: (id: string, title: string) => void;
   onDeleteConversation: (id: string) => void;
+  onRunSuggestion?: (text: string) => void;
 }
+
+const MAX_CONV_SUGGESTIONS = 5;
+const MAX_PROMPT_SUGGESTIONS = 4;
 
 export function Sidebar({
   conversations,
@@ -25,11 +47,17 @@ export function Sidebar({
   onCreateConversation,
   onRenameConversation,
   onDeleteConversation,
+  onRunSuggestion,
 }: SidebarProps) {
   const [query, setQuery] = useState("");
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [searchFocused, setSearchFocused] = useState(false);
+  const [activeSuggestionIndex, setActiveSuggestionIndex] = useState<
+    number | null
+  >(null);
   const profileRef = useRef<HTMLDivElement>(null);
+  const searchContainerRef = useRef<HTMLDivElement>(null);
 
   const { user, signout } = useAuth();
 
@@ -46,10 +74,109 @@ export function Sidebar({
 
   const filtered = useMemo(() => {
     if (!query.trim()) return conversations;
-    return conversations.filter((conv) =>
-      conv.title.toLowerCase().includes(query.toLowerCase()),
+    const q = query.toLowerCase();
+    return conversations.filter(
+      (conv) =>
+        conv.title.toLowerCase().includes(q) ||
+        conv.lastMessagePreview.toLowerCase().includes(q),
     );
   }, [conversations, query]);
+
+  const suggestionItems = useMemo((): SuggestionItem[] => {
+    if (!query.trim()) return [];
+    const q = query.toLowerCase();
+    const convs = filtered.slice(0, MAX_CONV_SUGGESTIONS).map((conv) => ({
+      type: "conversation" as const,
+      conv,
+    }));
+    const prompts = QUICK_PROMPTS.filter((s) =>
+      s.toLowerCase().includes(q),
+    )
+      .slice(0, MAX_PROMPT_SUGGESTIONS)
+      .map((text) => ({ type: "prompt" as const, text }));
+    return [...convs, ...prompts];
+  }, [filtered, query]);
+
+  const showSuggestions =
+    searchFocused && query.trim().length > 0 && suggestionItems.length > 0;
+
+  useEffect(() => {
+    setActiveSuggestionIndex(
+      suggestionItems.length > 0 ? 0 : null,
+    );
+  }, [suggestionItems.length, query]);
+
+  useEffect(() => {
+    if (!showSuggestions) return;
+    function handleClickOutside(e: MouseEvent) {
+      if (
+        searchContainerRef.current &&
+        !searchContainerRef.current.contains(e.target as Node)
+      ) {
+        setSearchFocused(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showSuggestions]);
+
+  const selectSuggestion = useCallback(
+    (item: SuggestionItem) => {
+      if (item.type === "conversation") {
+        onSelectConversation(item.conv.id);
+        setQuery("");
+        setSearchFocused(false);
+      } else {
+        if (onRunSuggestion) {
+          onRunSuggestion(item.text);
+          setQuery("");
+          setSearchFocused(false);
+        }
+      }
+    },
+    [onSelectConversation, onRunSuggestion],
+  );
+
+  const handleSearchKeyDown = useCallback(
+    (e: KeyboardEvent<HTMLInputElement>) => {
+      if (!showSuggestions || suggestionItems.length === 0) return;
+      if (e.key === "Escape") {
+        e.preventDefault();
+        setSearchFocused(false);
+        return;
+      }
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        setActiveSuggestionIndex((prev) => {
+          const next =
+            prev === null ? 0 : (prev + 1) % suggestionItems.length;
+          return next;
+        });
+        return;
+      }
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setActiveSuggestionIndex((prev) => {
+          const next =
+            prev === null
+              ? suggestionItems.length - 1
+              : (prev - 1 + suggestionItems.length) % suggestionItems.length;
+          return next;
+        });
+        return;
+      }
+      if (e.key === "Enter" && activeSuggestionIndex !== null) {
+        e.preventDefault();
+        selectSuggestion(suggestionItems[activeSuggestionIndex]);
+      }
+    },
+    [
+      showSuggestions,
+      suggestionItems,
+      activeSuggestionIndex,
+      selectSuggestion,
+    ],
+  );
 
   const pendingConversation = conversations.find(
     (c) => c.id === pendingDeleteId,
@@ -85,16 +212,93 @@ export function Sidebar({
         </div>
 
         {/* Search */}
-        <div className="mb-4 px-1">
+        <div className="mb-4 px-1" ref={searchContainerRef}>
           <div className="relative">
             <svg className="absolute left-2.5 top-1/2 -translate-y-1/2 text-fg-soft" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
             <input
               type="search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={handleSearchKeyDown}
+              onFocus={() => setSearchFocused(true)}
+              onBlur={() => {}}
               placeholder="Search conversations..."
               className="h-8 w-full rounded-md border border-transparent bg-bg-elevated pl-8 pr-3 text-[13px] text-fg placeholder:text-fg-soft transition-all focus:border-border-strong focus:bg-bg focus:outline-none focus:ring-1 focus:ring-border-strong"
+              aria-autocomplete="list"
+              aria-expanded={showSuggestions}
+              aria-controls="sidebar-search-listbox"
+              aria-activedescendant={
+                showSuggestions && activeSuggestionIndex !== null
+                  ? `sidebar-suggestion-${activeSuggestionIndex}`
+                  : undefined
+              }
             />
+            <AnimatePresence>
+              {showSuggestions && (
+                <motion.div
+                  id="sidebar-search-listbox"
+                  role="listbox"
+                  aria-label="Search suggestions"
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={{ duration: 0.15 }}
+                  className="absolute left-0 right-0 top-full z-50 mt-1 max-h-[280px] overflow-y-auto rounded-lg border border-border-subtle bg-bg-elevated py-1 shadow-xl"
+                >
+                  {suggestionItems.map((item, index) => {
+                    const selected = index === activeSuggestionIndex;
+                    if (item.type === "conversation") {
+                      return (
+                        <button
+                          key={item.conv.id}
+                          id={`sidebar-suggestion-${index}`}
+                          role="option"
+                          aria-selected={selected}
+                          type="button"
+                          className={`flex w-full flex-col gap-0.5 px-3 py-2 text-left text-[13px] transition-colors ${
+                            selected
+                              ? "bg-bg-subtle text-fg"
+                              : "text-fg-muted hover:bg-bg-subtle hover:text-fg"
+                          }`}
+                          onMouseDown={(e) => {
+                            e.preventDefault();
+                            selectSuggestion(item);
+                          }}
+                        >
+                          <span className="font-medium truncate">
+                            {item.conv.title}
+                          </span>
+                          <span className="line-clamp-1 text-[11px] text-fg-soft">
+                            {item.conv.lastMessagePreview}
+                          </span>
+                        </button>
+                      );
+                    }
+                    return (
+                      <button
+                        key={`prompt-${index}-${item.text.slice(0, 20)}`}
+                        id={`sidebar-suggestion-${index}`}
+                        role="option"
+                        aria-selected={selected}
+                        type="button"
+                        className={`flex w-full items-center gap-2 px-3 py-2 text-left text-[13px] transition-colors ${
+                          selected
+                            ? "bg-bg-subtle text-fg"
+                            : "text-fg-muted hover:bg-bg-subtle hover:text-fg"
+                        }`}
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          selectSuggestion(item);
+                        }}
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 opacity-50"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+                        <span className="line-clamp-1 truncate">{item.text}</span>
+                      </button>
+                    );
+                  })}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
 

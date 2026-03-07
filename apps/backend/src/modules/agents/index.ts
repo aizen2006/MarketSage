@@ -90,4 +90,19 @@ export const app = new Elysia({ prefix: "/agents" })
 			}
 		},
 		{ body: AgentsModel.chatBodySchema },
+	)
+	.post(
+		"/title",
+		async ({ body, set }) => {
+			try {
+				const title = await AgentsService.generateTitle(body.message);
+				return { title };
+			} catch (e) {
+				const msg = e instanceof Error ? e.message : "Title generation failed";
+				console.error("Title agent error", { message: msg });
+				set.status = 500;
+				return { error: { code: "INTERNAL_ERROR", message: msg } };
+			}
+		},
+		{ body: AgentsModel.titleBodySchema },
 	);

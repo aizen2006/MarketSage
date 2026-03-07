@@ -55,6 +55,9 @@ export default function ChatPage() {
             onCreateConversation={createConversation}
             onRenameConversation={renameConversation}
             onDeleteConversation={deleteConversation}
+            onRunSuggestion={(text) => {
+              if (activeConversation) sendMessage(text, mode);
+            }}
           />
         </div>
 
