@@ -36,6 +36,8 @@ yarn-error.log*
 # Misc
 .DS_Store
 *.pem
+skills-lock.json
+.agents
 
 # Local model/vector cache (generated at runtime)
 apps/backend/local_cache/
