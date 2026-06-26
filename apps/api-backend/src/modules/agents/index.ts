@@ -23,6 +23,17 @@ function getCost(mode: Mode): number {
 	return CALL_COST[mode] ?? 1;
 }
 
+/** Return a short user-facing message for known errors; otherwise generic. */
+function sanitizeAgentErrorMessage(e: unknown, generic: string): string {
+	const msg = e && typeof e === "object" && "message" in e && typeof (e as any).message === "string"
+		? (e as any).message
+		: "";
+	if (msg.includes("FMP_API_KEY") || msg.includes("OPENAI") || msg.includes("API key") || msg.includes("api key")) {
+		return "Configuration error: check API keys (OpenAI, FMP). See server logs for details.";
+	}
+	return generic;
+}
+
 export const app = new Elysia({ prefix: "/v1/agents" })
 	.use(apiKeyAuth)
 
@@ -57,11 +68,13 @@ export const app = new Elysia({ prefix: "/v1/agents" })
 					};
 				}
 
+				console.error("Quick agent error", e);
+				console.error("Quick agent error details", { message: e?.message, stack: e?.stack });
 				set.status = 500;
 				return {
 					error: {
 						code: "INTERNAL_ERROR",
-						message: "Error while running quick agent",
+						message: sanitizeAgentErrorMessage(e, "Error while running quick agent"),
 					},
 				};
 			}
@@ -101,11 +114,13 @@ export const app = new Elysia({ prefix: "/v1/agents" })
 					};
 				}
 
+				console.error("Deep agent error", e);
+				console.error("Deep agent error details", { message: e?.message, stack: e?.stack });
 				set.status = 500;
 				return {
 					error: {
 						code: "INTERNAL_ERROR",
-						message: "Error while running deep agent",
+						message: sanitizeAgentErrorMessage(e, "Error while running deep agent"),
 					},
 				};
 			}
@@ -145,11 +160,13 @@ export const app = new Elysia({ prefix: "/v1/agents" })
 					};
 				}
 
+				console.error("Auto agent error", e);
+				console.error("Auto agent error details", { message: e?.message, stack: e?.stack });
 				set.status = 500;
 				return {
 					error: {
 						code: "INTERNAL_ERROR",
-						message: "Error while running auto agent",
+						message: sanitizeAgentErrorMessage(e, "Error while running auto agent"),
 					},
 				};
 			}
@@ -183,6 +200,8 @@ export const app = new Elysia({ prefix: "/v1/agents" })
 					return;
 				}
 
+				console.error("Quick agent stream (chargeUpfront) error", e);
+				console.error("Quick agent stream error details", { message: e?.message, stack: e?.stack });
 				set.status = 500;
 				yield sse({
 					event: "error",
@@ -205,7 +224,9 @@ export const app = new Elysia({ prefix: "/v1/agents" })
 				}
 
 				await stream.completed;
-			} catch {
+			} catch (e: any) {
+				console.error("Quick agent stream (streaming) error", e);
+				console.error("Quick agent stream error details", { message: e?.message, stack: e?.stack });
 				yield sse({
 					event: "error",
 					data: {
@@ -242,6 +263,8 @@ export const app = new Elysia({ prefix: "/v1/agents" })
 					return;
 				}
 
+				console.error("Deep agent stream (chargeUpfront) error", e);
+				console.error("Deep agent stream error details", { message: e?.message, stack: e?.stack });
 				set.status = 500;
 				yield sse({
 					event: "error",
@@ -264,7 +287,9 @@ export const app = new Elysia({ prefix: "/v1/agents" })
 				}
 
 				await stream.completed;
-			} catch {
+			} catch (e: any) {
+				console.error("Deep agent stream (streaming) error", e);
+				console.error("Deep agent stream error details", { message: e?.message, stack: e?.stack });
 				yield sse({
 					event: "error",
 					data: {
@@ -301,6 +326,8 @@ export const app = new Elysia({ prefix: "/v1/agents" })
 					return;
 				}
 
+				console.error("Auto agent stream (chargeUpfront) error", e);
+				console.error("Auto agent stream error details", { message: e?.message, stack: e?.stack });
 				set.status = 500;
 				yield sse({
 					event: "error",
@@ -323,7 +350,9 @@ export const app = new Elysia({ prefix: "/v1/agents" })
 				}
 
 				await stream.completed;
-			} catch {
+			} catch (e: any) {
+				console.error("Auto agent stream (streaming) error", e);
+				console.error("Auto agent stream error details", { message: e?.message, stack: e?.stack });
 				yield sse({
 					event: "error",
 					data: {

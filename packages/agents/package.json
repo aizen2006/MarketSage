@@ -15,11 +15,10 @@
     "typescript": "^5"
   },
   "dependencies": {
-    "@openai/agents": "^0.5.3",
-    "@qdrant/js-client-rest": "^1.17.0",
-    "@tavily/core": "^0.7.2",
+    "@openai/agents": "^0.12.0",
+    "@tavily/core": "^0.7.6",
     "dotenv": "^17.3.1",
     "fastembed": "^2.1.0",
-    "zod": "^3.23.0"
+    "zod": "^4.4.3"
   }
 }

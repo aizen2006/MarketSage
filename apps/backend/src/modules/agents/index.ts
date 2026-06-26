@@ -35,7 +35,8 @@ export const app = new Elysia({ prefix: "/agents" })
 				return { response: result.response, mode: result.mode };
 			} catch (e) {
 				const msg = e instanceof Error ? e.message : "Agent error";
-				console.error("Auto agent JSON error", {
+				console.error("Auto agent JSON error", e);
+				console.error("Auto agent JSON error details", {
 					mode: "auto",
 					promptPreview: body.message.slice(0, 100),
 					message: msg,
@@ -57,7 +58,8 @@ export const app = new Elysia({ prefix: "/agents" })
 				return { response: result.response, mode: result.mode };
 			} catch (e) {
 				const msg = e instanceof Error ? e.message : "Agent error";
-				console.error("Quick agent JSON error", {
+				console.error("Quick agent JSON error", e);
+				console.error("Quick agent JSON error details", {
 					mode: "quick",
 					promptPreview: body.message.slice(0, 100),
 					message: msg,
@@ -79,7 +81,8 @@ export const app = new Elysia({ prefix: "/agents" })
 				return { response: result.response, mode: result.mode };
 			} catch (e) {
 				const msg = e instanceof Error ? e.message : "Agent error";
-				console.error("Deep agent JSON error", {
+				console.error("Deep agent JSON error", e);
+				console.error("Deep agent JSON error details", {
 					mode: "deep",
 					promptPreview: body.message.slice(0, 100),
 					message: msg,
@@ -99,7 +102,8 @@ export const app = new Elysia({ prefix: "/agents" })
 				return { title };
 			} catch (e) {
 				const msg = e instanceof Error ? e.message : "Title generation failed";
-				console.error("Title agent error", { message: msg });
+				console.error("Title agent error", e);
+				console.error("Title agent error details", { message: msg, stack: e instanceof Error ? e.stack : undefined });
 				set.status = 500;
 				return { error: { code: "INTERNAL_ERROR", message: msg } };
 			}
