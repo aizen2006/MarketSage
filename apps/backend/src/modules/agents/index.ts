@@ -24,7 +24,6 @@ export const app = new Elysia({ prefix: "/agents" })
 			userId: decoded.userId as number,
 		};
 	})
-	// --- JSON (non-streaming) endpoints ---
 	.post(
 		"/auto/json",
 		async ({ body, userId, set }) => {
