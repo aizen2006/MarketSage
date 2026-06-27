@@ -2,6 +2,7 @@ import Elysia from "elysia";
 import { jwt } from "@elysiajs/jwt";
 import { ApiKeyService } from "./service";
 import { ApiKeyModel } from "./model";
+import { cached, cacheKey, invalidate, TTL } from "../../utils/cache";
 
 export const app = new Elysia({prefix : "/apikeys"})
     .use(
@@ -31,6 +32,7 @@ export const app = new Elysia({prefix : "/apikeys"})
                 message: "Error while creating api key"
             })
         }
+        await invalidate([cacheKey(userId, "apikeys")])
         return status(200, {
             id,
             userId: String(userId),
@@ -44,7 +46,11 @@ export const app = new Elysia({prefix : "/apikeys"})
         }
     })
     .get("/" ,async({userId , status })=>{
-        const apiKeys = await ApiKeyService.getApiKeys(String(userId));
+        const apiKeys = await cached(
+            cacheKey(userId, "apikeys"),
+            TTL.apikeys,
+            () => ApiKeyService.getApiKeys(String(userId)),
+        );
         if(!apiKeys){
             return status(404, {
                 message: "No api keys found"
@@ -62,6 +68,7 @@ export const app = new Elysia({prefix : "/apikeys"})
     .put("/",async ({body , status , userId })=>{
         try{
             await ApiKeyService.updateApiKey( body.apiKeyId , String(userId) , body.disabled );
+            await invalidate([cacheKey(userId, "apikeys")])
             return status(200, {
                 message: "Api key has been Updated successfully"
             })

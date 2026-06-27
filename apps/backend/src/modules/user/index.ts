@@ -2,6 +2,7 @@ import Elysia, { t } from "elysia";
 import { jwt } from "@elysiajs/jwt";
 import { UserService } from "./service";
 import { UserModel } from "./model";
+import { cached, cacheKey, invalidate, TTL } from "../../utils/cache";
 
 export const app = new Elysia({ prefix: "/user" })
 	.use(
@@ -26,7 +27,11 @@ export const app = new Elysia({ prefix: "/user" })
 	.get(
 		"/credits",
 		async ({ status, userId }) => {
-			const credits = await UserService.getCredits(String(userId));
+			const credits = await cached(
+				cacheKey(userId, "credits"),
+				TTL.credits,
+				() => UserService.getCredits(String(userId)),
+			);
 			if (credits === null) {
 				return status(404, {
 					message: "User not found",
@@ -46,7 +51,11 @@ export const app = new Elysia({ prefix: "/user" })
 	.get(
 		"/usageLog",
 		async ({ status, userId }) => {
-			const usageLogs = await UserService.getUsageLogs(String(userId));
+			const usageLogs = await cached(
+				cacheKey(userId, "usageLog"),
+				TTL.usageLog,
+				() => UserService.getUsageLogs(String(userId)),
+			);
 			return status(200, {
 				usageLogs,
 			});
@@ -60,7 +69,11 @@ export const app = new Elysia({ prefix: "/user" })
 	.get(
 		"/transactions",
 		async ({ status, userId }) => {
-			const transactions = await UserService.getTransactions(String(userId));
+			const transactions = await cached(
+				cacheKey(userId, "transactions"),
+				TTL.transactions,
+				() => UserService.getTransactions(String(userId)),
+			);
 			return status(200, {
 				transactions,
 			});
@@ -74,7 +87,11 @@ export const app = new Elysia({ prefix: "/user" })
 	.get(
 		"/conversations",
 		async ({ status, userId }) => {
-			const conversations = await UserService.getConversations(String(userId));
+			const conversations = await cached(
+				cacheKey(userId, "conversations"),
+				TTL.conversations,
+				() => UserService.getConversations(String(userId)),
+			);
 			return status(200, {
 				conversations,
 			});
@@ -93,6 +110,7 @@ export const app = new Elysia({ prefix: "/user" })
 				String(userId),
 				title,
 			);
+			await invalidate([cacheKey(userId, "conversations")]);
 			return status(201, conversation);
 		},
 		{
@@ -113,6 +131,7 @@ export const app = new Elysia({ prefix: "/user" })
 			if (!updated) {
 				return status(404, { message: "Conversation not found" });
 			}
+			await invalidate([cacheKey(userId, "conversations")]);
 			return status(200, updated);
 		},
 		{
@@ -126,7 +145,11 @@ export const app = new Elysia({ prefix: "/user" })
 	.get(
 		"/insights",
 		async ({ status, userId }) => {
-			const insights = await UserService.getInsights(String(userId));
+			const insights = await cached(
+				cacheKey(userId, "insights"),
+				TTL.insights,
+				() => UserService.getInsights(String(userId)),
+			);
 			return status(200, insights);
 		},
 		{

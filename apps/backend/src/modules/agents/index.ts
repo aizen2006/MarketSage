@@ -2,6 +2,16 @@ import Elysia from "elysia";
 import { jwt } from "@elysiajs/jwt";
 import { AgentsModel } from "./model";
 import { AgentsService } from "./service";
+import { cacheKey, invalidate } from "../../utils/cache";
+
+/** Chat consumes credits and writes a usage log, so the derived caches go stale. */
+function invalidateAfterChat(userId: number) {
+	return invalidate([
+		cacheKey(userId, "credits"),
+		cacheKey(userId, "usageLog"),
+		cacheKey(userId, "insights"),
+	]);
+}
 
 export const app = new Elysia({ prefix: "/agents" })
 	.use(
@@ -31,6 +41,7 @@ export const app = new Elysia({ prefix: "/agents" })
 				const result = await AgentsService.chatJson("auto", body.message, {
 					userId: String(userId),
 				});
+				await invalidateAfterChat(userId);
 				return { response: result.response, mode: result.mode };
 			} catch (e) {
 				const msg = e instanceof Error ? e.message : "Agent error";
@@ -54,6 +65,7 @@ export const app = new Elysia({ prefix: "/agents" })
 				const result = await AgentsService.chatJson("quick", body.message, {
 					userId: String(userId),
 				});
+				await invalidateAfterChat(userId);
 				return { response: result.response, mode: result.mode };
 			} catch (e) {
 				const msg = e instanceof Error ? e.message : "Agent error";
@@ -77,6 +89,7 @@ export const app = new Elysia({ prefix: "/agents" })
 				const result = await AgentsService.chatJson("deep", body.message, {
 					userId: String(userId),
 				});
+				await invalidateAfterChat(userId);
 				return { response: result.response, mode: result.mode };
 			} catch (e) {
 				const msg = e instanceof Error ? e.message : "Agent error";

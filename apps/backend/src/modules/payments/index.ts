@@ -2,6 +2,7 @@ import Elysia from "elysia";
 import { jwt } from "@elysiajs/jwt";
 import { PaymentsService } from "./service";
 import { PaymentsModel } from "./model";
+import { cacheKey, invalidate } from "../../utils/cache";
 
 export const app = new Elysia({ prefix: "/payments" })
 	.use(
@@ -28,6 +29,11 @@ export const app = new Elysia({ prefix: "/payments" })
 		async ({ status, userId }) => {
 			try {
 				await PaymentsService.onramp(String(userId));
+				await invalidate([
+					cacheKey(userId, "credits"),
+					cacheKey(userId, "transactions"),
+					cacheKey(userId, "insights"),
+				]);
 				return status(200, {
 					message: "Onramp successful",
 				});
