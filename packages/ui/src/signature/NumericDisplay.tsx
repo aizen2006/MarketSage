@@ -17,9 +17,9 @@ export function NumericDisplay({
 }: NumericDisplayProps) {
   const trendClass =
     trend === "positive"
-      ? "text-[var(--accent)]"
+      ? "text-[var(--positive)]"
       : trend === "negative"
-        ? "text-[var(--highlight)]"
+        ? "text-[var(--danger)]"
         : "";
   const variantClass =
     variant === "emphasis"

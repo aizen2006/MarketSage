@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { MarketSignalCard } from "@repo/ui";
+import { Icon } from "./Icon";
 
 type SignalItem = {
   id: string;
@@ -64,7 +65,7 @@ export function InsightsPanel() {
         <div className="flex-1 overflow-y-auto p-4">
           <div className="space-y-6">
             <section>
-              <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-fg-muted">
+              <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-fg-soft">
                 Live signals
               </h2>
               <div className="space-y-3">
@@ -77,7 +78,7 @@ export function InsightsPanel() {
               </div>
             </section>
             <section>
-              <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-fg-muted">
+              <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-fg-soft">
                 Insight stream
               </h2>
               <div className="space-y-2">
@@ -113,9 +114,15 @@ export function InsightsPanel() {
       <div className="flex-1 overflow-y-auto p-4">
         <div className="space-y-6">
           <section>
-            <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-fg-muted">
-              Live signals
-            </h2>
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="text-[11px] font-semibold uppercase tracking-[0.08em] text-fg-soft">
+                Live signals
+              </h2>
+              <span className="inline-flex items-center gap-1.5 rounded-pill border border-border-subtle px-2.5 py-0.5 text-[11px] font-medium text-fg-muted">
+                <span className="h-1.5 w-1.5 rounded-full bg-positive" />
+                Live
+              </span>
+            </div>
             <div className="space-y-3">
               {signals.length === 0 ? (
                 <p className="text-xs text-fg-soft">No signals yet.</p>
@@ -136,7 +143,7 @@ export function InsightsPanel() {
           </section>
 
           <section>
-            <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-fg-muted">
+            <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-fg-soft">
               Insight stream
             </h2>
             <ul className="space-y-2">
@@ -146,12 +153,17 @@ export function InsightsPanel() {
                 insights.map((insight) => (
                   <li
                     key={insight.id}
-                    className="rounded-lg border border-border-subtle bg-bg-elevated p-3 text-sm transition-colors hover:border-border-strong"
+                    className="flex gap-3 rounded-lg border border-border-subtle bg-bg-surface p-3.5 text-sm shadow-soft transition-colors hover:border-accent"
                   >
-                    <p className="font-medium text-fg">{insight.title}</p>
-                    <p className="mt-1 text-xs text-fg-muted">
-                      {insight.summary}
-                    </p>
+                    <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-[9px] bg-accent-tint">
+                      <Icon name="lightbulb" className="text-[16px] text-accent" />
+                    </span>
+                    <div className="min-w-0">
+                      <p className="font-medium text-fg">{insight.title}</p>
+                      <p className="mt-1 text-xs leading-relaxed text-fg-muted">
+                        {insight.summary}
+                      </p>
+                    </div>
                   </li>
                 ))
               )}

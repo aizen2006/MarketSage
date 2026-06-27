@@ -15,6 +15,7 @@ import { ConversationItem } from "./ConversationItem";
 import { ConfirmDialog } from "./ConfirmDialog";
 import { Button, IconButton } from "@repo/ui";
 import { useAuth } from "../context/AuthContext";
+import { Icon } from "./Icon";
 
 const QUICK_PROMPTS = [
   "Summarize my portfolio performance over the last 30 days.",
@@ -187,12 +188,12 @@ export function Sidebar({
       <aside className="flex h-full w-full flex-col bg-bg-surface px-3 py-4 md:max-w-[280px]">
         {/* Header Logo & New Chat */}
         <div className="flex items-center justify-between mb-6 px-1">
-          <div className="flex items-center gap-3">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary text-xs font-bold text-fg-inverse shadow-sm">
-              MS
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-7 w-7 items-center justify-center rounded-[8px] bg-gradient-to-br from-accent to-[#F8A24A] text-white shadow-[0_4px_12px_rgba(242,106,31,0.28)]">
+              <Icon name="bolt" className="text-[16px]" />
             </div>
             <div className="flex flex-col">
-              <span className="text-[13px] font-semibold tracking-tight text-fg leading-none">
+              <span className="text-[14px] font-semibold tracking-tight text-fg leading-none">
                 MarketSage
               </span>
               <span className="text-[11px] text-fg-soft mt-0.5">
@@ -207,14 +208,17 @@ export function Sidebar({
             aria-label="New conversation"
             title="New Chat"
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+            <Icon name="edit_square" className="text-[18px]" />
           </IconButton>
         </div>
 
         {/* Search */}
         <div className="mb-4 px-1" ref={searchContainerRef}>
           <div className="relative">
-            <svg className="absolute left-2.5 top-1/2 -translate-y-1/2 text-fg-soft" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <Icon
+              name="search"
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[18px] text-fg-soft"
+            />
             <input
               type="search"
               value={query}
@@ -223,7 +227,7 @@ export function Sidebar({
               onFocus={() => setSearchFocused(true)}
               onBlur={() => {}}
               placeholder="Search conversations..."
-              className="h-8 w-full rounded-md border border-transparent bg-bg-elevated pl-8 pr-3 text-[13px] text-fg placeholder:text-fg-soft transition-all focus:border-border-strong focus:bg-bg focus:outline-none focus:ring-1 focus:ring-border-strong"
+              className="h-9 w-full rounded-pill border border-border-subtle bg-bg-subtle pl-10 pr-3 text-[13px] text-fg placeholder:text-fg-soft transition-all focus:border-accent focus:bg-bg-surface focus:outline-none focus:ring-2 focus:ring-accent-soft"
               aria-autocomplete="list"
               aria-expanded={showSuggestions}
               aria-controls="sidebar-search-listbox"
@@ -243,7 +247,7 @@ export function Sidebar({
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -4 }}
                   transition={{ duration: 0.15 }}
-                  className="absolute left-0 right-0 top-full z-50 mt-1 max-h-[280px] overflow-y-auto rounded-lg border border-border-subtle bg-bg-elevated py-1 shadow-xl"
+                  className="absolute left-0 right-0 top-full z-50 mt-1 max-h-[280px] overflow-y-auto rounded-lg border border-border-subtle bg-bg-surface py-1 shadow-overlay"
                 >
                   {suggestionItems.map((item, index) => {
                     const selected = index === activeSuggestionIndex;
@@ -257,7 +261,7 @@ export function Sidebar({
                           type="button"
                           className={`flex w-full flex-col gap-0.5 px-3 py-2 text-left text-[13px] transition-colors ${
                             selected
-                              ? "bg-bg-subtle text-fg"
+                              ? "bg-accent-tint text-accent-strong"
                               : "text-fg-muted hover:bg-bg-subtle hover:text-fg"
                           }`}
                           onMouseDown={(e) => {
@@ -283,7 +287,7 @@ export function Sidebar({
                         type="button"
                         className={`flex w-full items-center gap-2 px-3 py-2 text-left text-[13px] transition-colors ${
                           selected
-                            ? "bg-bg-subtle text-fg"
+                            ? "bg-accent-tint text-accent-strong"
                             : "text-fg-muted hover:bg-bg-subtle hover:text-fg"
                         }`}
                         onMouseDown={(e) => {
@@ -291,7 +295,10 @@ export function Sidebar({
                           selectSuggestion(item);
                         }}
                       >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 opacity-50"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+                        <Icon
+                          name="auto_awesome"
+                          className={`shrink-0 text-[15px] ${selected ? "text-accent" : "text-fg-soft"}`}
+                        />
                         <span className="line-clamp-1 truncate">{item.text}</span>
                       </button>
                     );
@@ -327,32 +334,35 @@ export function Sidebar({
 
         {/* Footer */}
         <div className="mt-auto pt-4 px-1 space-y-2 relative" ref={profileRef}>
+          {/* Upsell card */}
+          <div className="overflow-hidden rounded-md border border-border-subtle">
+            <div className="h-12 bg-gradient-to-r from-accent via-[#F8A24A] to-[#FFD9A8]" />
+            <div className="p-3">
+              <div className="text-[13px] font-semibold text-fg">
+                Unlock Smarter Investing
+              </div>
+              <p className="mt-1 text-[11px] leading-snug text-fg-muted">
+                Upgrade to access advanced AI insights.
+              </p>
+              <Button
+                variant="secondary"
+                size="sm"
+                className="mt-2.5 w-full justify-center"
+              >
+                Upgrade
+              </Button>
+            </div>
+          </div>
+
           <Link
             href="/api-keys"
-            className="flex items-center justify-between rounded-lg px-2 py-2 text-[12px] text-fg-soft hover:bg-bg-elevated hover:text-fg transition-colors"
+            className="flex items-center justify-between rounded-lg px-2 py-2 text-[12px] text-fg-soft hover:bg-bg-subtle hover:text-fg transition-colors"
           >
-            <span className="inline-flex items-center gap-1.5">
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <circle cx="12" cy="12" r="3" />
-                <path d="M4.9 4.9 7.1 7.1" />
-                <path d="M16.9 16.9 19.1 19.1" />
-                <path d="M3 12h3" />
-                <path d="M18 12h3" />
-                <path d="M4.9 19.1 7.1 16.9" />
-                <path d="M16.9 7.1 19.1 4.9" />
-              </svg>
+            <span className="inline-flex items-center gap-2">
+              <Icon name="key" className="text-[16px]" />
               <span>API Keys</span>
             </span>
-            <span className="text-[10px] uppercase tracking-wide text-fg-muted">
+            <span className="rounded-pill bg-accent px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide text-white">
               New
             </span>
           </Link>
@@ -367,7 +377,7 @@ export function Sidebar({
             aria-label="User menu"
           >
             <div className="flex items-center gap-2.5">
-              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-fg-inverse shrink-0">
+              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-accent to-[#F8A24A] text-[10px] font-bold text-white shrink-0">
                 {user?.name?.slice(0, 2).toUpperCase() ?? "?"}
               </div>
               <div className="flex flex-col text-left min-w-0">
@@ -379,7 +389,7 @@ export function Sidebar({
                 </span>
               </div>
             </div>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-fg-soft shrink-0"><path d="M6 9l6 6 6-6"/></svg>
+            <Icon name="expand_more" className="text-[18px] text-fg-soft shrink-0" />
           </button>
 
           <AnimatePresence>
@@ -389,7 +399,7 @@ export function Sidebar({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 4 }}
                 transition={{ duration: 0.15 }}
-                className="absolute bottom-full left-1 right-1 mb-1 rounded-xl border border-border-subtle bg-bg-elevated p-3 shadow-xl z-50"
+                className="absolute bottom-full left-1 right-1 mb-1 rounded-lg border border-border-subtle bg-bg-surface p-3 shadow-overlay z-50"
                 role="dialog"
                 aria-label="User menu"
               >

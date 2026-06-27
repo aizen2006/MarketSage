@@ -3,12 +3,13 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
+import { Icon } from "./Icon";
 
 const QUICK_ACTIONS = [
-  { id: "new-chat", label: "New conversation", shortcut: "N", path: "/chat" },
-  { id: "api-keys", label: "API keys", shortcut: "K", path: "/api-keys" },
-  { id: "quick-aapl", label: "Quick: AAPL summary", action: "query" },
-  { id: "quick-portfolio", label: "Quick: Portfolio risk", action: "query" },
+  { id: "new-chat", label: "New conversation", shortcut: "N", path: "/chat", icon: "edit_square" },
+  { id: "api-keys", label: "API keys", shortcut: "K", path: "/api-keys", icon: "key" },
+  { id: "quick-aapl", label: "Quick: AAPL summary", action: "query", icon: "trending_up" },
+  { id: "quick-portfolio", label: "Quick: Portfolio risk", action: "query", icon: "shield" },
 ];
 
 interface CommandPaletteProps {
@@ -94,22 +95,11 @@ export function CommandPalette({
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: -8 }}
           transition={{ duration: 0.2 }}
-          className="w-full max-w-xl rounded-lg border border-border-subtle bg-bg-surface overflow-hidden"
+          className="w-full max-w-xl rounded-lg border border-border-subtle bg-bg-surface shadow-overlay overflow-hidden"
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="flex items-center gap-2 border-b border-border-subtle px-3 py-2">
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              className="text-fg-soft shrink-0"
-            >
-              <circle cx="11" cy="11" r="8" />
-              <path d="m21 21-4.3-4.3" />
-            </svg>
+          <div className="flex items-center gap-2 border-b border-border-subtle px-3.5 py-2.5">
+            <Icon name="search" className="text-[19px] text-fg-soft shrink-0" />
             <input
               type="text"
               value={query}
@@ -134,13 +124,19 @@ export function CommandPalette({
                   type="button"
                   className={`flex w-full items-center justify-between px-3 py-2.5 text-left text-sm transition-colors ${
                     i === selectedIndex
-                      ? "bg-primary/15 text-fg"
+                      ? "bg-accent-tint text-accent-strong"
                       : "text-fg-muted hover:bg-bg-subtle hover:text-fg"
                   }`}
                   onMouseEnter={() => setSelectedIndex(i)}
                   onClick={() => handleSelect(item)}
                 >
-                  <span>{item.label}</span>
+                  <span className="inline-flex items-center gap-2.5">
+                    <Icon
+                      name={item.icon}
+                      className={`text-[18px] ${i === selectedIndex ? "text-accent" : "text-fg-soft"}`}
+                    />
+                    {item.label}
+                  </span>
                   {item.shortcut && (
                     <kbd className="rounded border border-border-subtle px-1.5 py-0.5 text-[10px] text-fg-soft">
                       {item.shortcut}

@@ -37,7 +37,7 @@ export function Dialog({
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 8 }}
         transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-        className="w-full max-w-sm rounded-xl border border-border-subtle bg-bg-elevated p-6 text-sm text-fg shadow-xl"
+        className="w-full max-w-sm rounded-lg border border-border-subtle bg-bg-surface p-6 text-sm text-fg shadow-overlay"
       >
         <h2 className="text-base font-semibold tracking-tight">{title}</h2>
         {description && (

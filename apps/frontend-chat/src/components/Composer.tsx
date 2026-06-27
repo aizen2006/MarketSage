@@ -10,7 +10,7 @@ import {
   DragEvent,
 } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { IconButton } from "@repo/ui";
+import { Icon } from "./Icon";
 
 /** Local attachment for composer (client-side only, no upload). */
 export interface ComposerAttachment {
@@ -193,11 +193,11 @@ export function Composer({ onSend, disabled, isEmptyState }: ComposerProps) {
 
   return (
     <div
-      className={`relative w-full max-w-3xl rounded-2xl border transition-all duration-300 bg-bg-surface shadow-soft ${
+      className={`relative w-full max-w-3xl rounded-lg border transition-all duration-300 bg-bg-surface shadow-soft ${
         focused
-          ? "border-border-strong ring-1 ring-border-strong"
+          ? "border-accent ring-2 ring-accent-soft"
           : "border-border-subtle"
-      } ${isDragging ? "ring-1 ring-border-strong border-border-strong" : ""}`}
+      } ${isDragging ? "ring-2 ring-accent-soft border-accent" : ""}`}
       aria-label="Message composer"
       onDragEnter={onDragEnter}
       onDragLeave={onDragLeave}
@@ -225,10 +225,10 @@ export function Composer({ onSend, disabled, isEmptyState }: ComposerProps) {
                 <button
                   type="button"
                   onClick={() => removeAttachment(a.id)}
-                  className="shrink-0 rounded p-0.5 text-fg-soft hover:bg-bg-elevated hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-strong"
+                  className="shrink-0 rounded p-0.5 text-fg-soft hover:bg-bg-elevated hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-soft"
                   aria-label={`Remove ${a.name}`}
                 >
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                  <Icon name="close" className="text-[14px]" />
                 </button>
               </motion.div>
             ))}
@@ -236,56 +236,80 @@ export function Composer({ onSend, disabled, isEmptyState }: ComposerProps) {
         )}
       </AnimatePresence>
 
-      <div className="flex items-end gap-2 px-3 py-3">
-        <input
-          ref={fileInputRef}
-          type="file"
-          multiple
-          className="hidden"
-          accept="*/*"
-          onChange={(e) => {
-            addFiles(e.target.files);
-            e.target.value = "";
-          }}
-        />
-        <IconButton
-          variant="ghost"
-          size="sm"
-          className="mb-0.5 shrink-0 rounded-xl"
-          aria-label="Attach file"
-          onClick={() => fileInputRef.current?.click()}
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
-        </IconButton>
+      <input
+        ref={fileInputRef}
+        type="file"
+        multiple
+        className="hidden"
+        accept="*/*"
+        onChange={(e) => {
+          addFiles(e.target.files);
+          e.target.value = "";
+        }}
+      />
 
-        <textarea
-          ref={textareaRef}
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          onKeyDown={handleKeyDown}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
-          rows={isEmptyState && !value ? 2 : 1}
-          className="max-h-[200px] flex-1 resize-none bg-transparent py-1.5 pl-0 pr-1 text-[15px] leading-relaxed text-fg placeholder:text-fg-soft focus:outline-none"
-          placeholder="Ask MarketSage anything..."
-          aria-label="Type your financial query"
-        />
+      <textarea
+        ref={textareaRef}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        onKeyDown={handleKeyDown}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+        rows={isEmptyState && !value ? 2 : 1}
+        className="max-h-[200px] w-full resize-none bg-transparent px-4 pt-4 pb-1 text-[15px] leading-relaxed text-fg placeholder:text-fg-soft focus:outline-none"
+        placeholder="Ask MarketSage anything..."
+        aria-label="Type your financial query"
+      />
 
-        <motion.button
-          type="button"
-          disabled={disabled || !value.trim()}
-          onClick={handleSend}
-          whileHover={value.trim() && !disabled ? { scale: 1.05 } : {}}
-          whileTap={value.trim() && !disabled ? { scale: 0.95 } : {}}
-          className={`mb-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl transition-colors ${
-            value.trim() && !disabled
-              ? "bg-primary text-fg-inverse"
-              : "bg-bg-surface text-fg-soft"
-          }`}
-          aria-label="Send message"
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>
-        </motion.button>
+      <div className="flex items-center justify-between gap-2 px-3 pb-3 pt-1.5">
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            aria-label="Attach file"
+            onClick={() => fileInputRef.current?.click()}
+            className="flex h-8 w-8 items-center justify-center rounded-pill border border-border-subtle text-fg-soft transition-colors hover:bg-bg-subtle hover:text-fg"
+          >
+            <Icon name="add" className="text-[18px]" />
+          </button>
+          <span className="inline-flex items-center gap-1.5 rounded-pill border border-border-subtle px-3 py-1.5 text-[13px] font-medium text-fg-muted">
+            <Icon name="psychology" className="text-[16px] text-accent" />
+            Think Deeper
+          </span>
+          <span className="inline-flex items-center gap-1.5 rounded-pill border border-border-subtle px-3 py-1.5 text-[13px] font-medium text-fg-muted">
+            <Icon name="tune" className="text-[16px]" />
+            Tools
+          </span>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <span className="hidden items-center gap-2 rounded-pill border border-border-subtle px-3 py-1.5 text-[13px] font-medium text-fg sm:inline-flex">
+            <span className="h-3.5 w-3.5 rounded-full bg-accent" />
+            Ember Pro AI
+            <Icon name="expand_more" className="text-[18px] text-fg-soft" />
+          </span>
+          <button
+            type="button"
+            aria-label="Voice input"
+            className="flex h-8 w-8 items-center justify-center rounded-pill text-fg-soft transition-colors hover:text-fg"
+          >
+            <Icon name="mic" className="text-[19px]" />
+          </button>
+          <motion.button
+            type="button"
+            disabled={disabled || !value.trim()}
+            onClick={handleSend}
+            whileHover={value.trim() && !disabled ? { scale: 1.05 } : {}}
+            whileTap={value.trim() && !disabled ? { scale: 0.95 } : {}}
+            className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-pill transition-colors ${
+              value.trim() && !disabled
+                ? "bg-accent text-white shadow-[0_6px_16px_rgba(242,106,31,0.3)] hover:bg-accent-strong"
+                : "bg-bg-subtle text-fg-soft"
+            }`}
+            aria-label="Send message"
+          >
+            <Icon name="arrow_upward" className="text-[19px]" />
+          </motion.button>
+        </div>
       </div>
 
       <AnimatePresence>
@@ -303,7 +327,7 @@ export function Composer({ onSend, disabled, isEmptyState }: ComposerProps) {
                 Upload a PDF or paste a ticker to get started.
               </p>
             )}
-            <div className="rounded-2xl border border-border-subtle bg-white p-2 shadow-lg dark:bg-bg-elevated dark:shadow-xl">
+            <div className="rounded-lg border border-border-subtle bg-bg-surface p-2 shadow-overlay">
               {filteredSuggestions.map((suggestion, index) => {
                 const selected = index === activeSuggestion;
                 return (
@@ -312,9 +336,9 @@ export function Composer({ onSend, disabled, isEmptyState }: ComposerProps) {
                     type="button"
                     role="option"
                     aria-selected={selected}
-                    className={`flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-left text-[13px] transition-colors ${
+                    className={`flex w-full items-center gap-2.5 rounded-md px-3 py-2.5 text-left text-[13px] transition-colors ${
                       selected
-                        ? "bg-bg-subtle text-fg"
+                        ? "bg-accent-tint text-accent-strong"
                         : "text-fg-muted hover:bg-bg-subtle hover:text-fg"
                     }`}
                     onMouseDown={(e) => {
@@ -323,9 +347,10 @@ export function Composer({ onSend, disabled, isEmptyState }: ComposerProps) {
                       setActiveSuggestion(index);
                     }}
                   >
-                    <span className="flex h-5 w-5 shrink-0 items-center justify-center text-fg-soft" aria-hidden>
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3z"/><path d="M5 21l2.5-7.5L15 11l-7.5 2.5L5 21z"/><path d="M19 21l-2.5-7.5L9 11l7.5 2.5L19 21z"/></svg>
-                    </span>
+                    <Icon
+                      name="auto_awesome"
+                      className={`text-[16px] ${selected ? "text-accent" : "text-fg-soft"}`}
+                    />
                     <span className="truncate">{suggestion}</span>
                   </button>
                 );

@@ -20,11 +20,10 @@ const sizeClasses: Record<Size, string> = {
 
 const variantClasses: Record<Variant, string> = {
   default:
-    "bg-bg-subtle text-fg hover:bg-border-subtle shadow-sm",
-  ghost:
-    "bg-transparent text-fg-soft hover:text-fg hover:bg-bg-subtle",
+    "bg-accent text-white shadow-[0_6px_16px_rgba(242,106,31,0.3)] hover:bg-accent-strong",
+  ghost: "bg-transparent text-fg-soft hover:text-fg hover:bg-bg-subtle",
   outline:
-    "border border-border-subtle bg-transparent text-fg hover:bg-bg-subtle shadow-sm",
+    "border border-border-subtle bg-bg-surface text-fg-soft hover:bg-bg-subtle",
 };
 
 export function IconButton({
@@ -36,7 +35,7 @@ export function IconButton({
   return (
     <button
       {...props}
-      className={`inline-flex items-center justify-center rounded-lg transition-colors duration-200 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-strong focus-visible:ring-offset-1 focus-visible:ring-offset-bg disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 ${sizeClasses[size]} ${variantClasses[variant]} ${className}`}
+      className={`inline-flex items-center justify-center rounded-pill transition-colors duration-200 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-1 focus-visible:ring-offset-bg disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 ${sizeClasses[size]} ${variantClasses[variant]} ${className}`}
     />
   );
 }

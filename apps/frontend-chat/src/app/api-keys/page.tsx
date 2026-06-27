@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import { AuthGuard } from "../../components/AuthGuard";
 import { Button, Card, IconButton, Skeleton } from "@repo/ui";
+import { Icon } from "../../components/Icon";
 import { useAuth } from "../../context/AuthContext";
 import {
   ApiKey,
@@ -199,20 +200,9 @@ export default function ApiKeysPage() {
               <button
                 type="button"
                 onClick={() => router.push("/chat")}
-                className="inline-flex w-fit items-center gap-1 rounded-full border border-transparent bg-bg-subtle/60 px-3 py-1 text-[11px] font-medium text-fg-soft shadow-sm transition-all hover:border-border-subtle hover:bg-bg hover:text-fg"
+                className="inline-flex w-fit items-center gap-1 rounded-pill border border-border-subtle bg-bg-surface px-3 py-1 text-[11px] font-medium text-fg-soft shadow-soft transition-all hover:border-accent hover:bg-accent-tint hover:text-accent-strong"
               >
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M15 18l-6-6 6-6" />
-                </svg>
+                <Icon name="arrow_back" className="text-[15px]" />
                 Back to chat
               </button>
               <div className="flex items-center gap-2">
@@ -235,8 +225,8 @@ export default function ApiKeysPage() {
               className="flex items-center gap-3"
             >
               {user?.email && (
-                <div className="hidden items-center gap-2 rounded-full border border-border-subtle bg-bg-subtle/60 px-3 py-1 text-[11px] text-fg-soft md:flex">
-                  <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary/20 text-[10px] font-semibold text-primary">
+                <div className="hidden items-center gap-2 rounded-pill border border-border-subtle bg-bg-surface px-3 py-1 text-[11px] text-fg-soft md:flex">
+                  <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-br from-accent to-[#F8A24A] text-[10px] font-semibold text-white">
                     {user.email.slice(0, 2).toUpperCase()}
                   </span>
                   <span className="truncate max-w-[160px]">
@@ -262,9 +252,10 @@ export default function ApiKeysPage() {
                 initial={{ opacity: 0, y: -4 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -4 }}
-                className="rounded-lg border border-red-500/40 bg-red-500/5 px-3 py-2 text-xs text-red-200 backdrop-blur-sm"
+                className="flex items-center gap-2 rounded-md border border-danger/20 bg-danger-soft px-3 py-2 text-xs text-danger"
               >
-                {error}
+                <Icon name="error" className="text-[15px]" />
+                <span>{error}</span>
               </motion.div>
             )}
           </AnimatePresence>
@@ -286,7 +277,7 @@ export default function ApiKeysPage() {
                     exit={{ opacity: 0, y: -6, scale: 0.98 }}
                     transition={{ duration: 0.2 }}
                   >
-                    <Card className="border border-primary/40 bg-primary/10">
+                    <Card className="border border-accent-soft bg-accent-tint">
                       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                         <div className="space-y-1">
                           <p className="text-sm font-semibold text-fg">
@@ -324,7 +315,7 @@ export default function ApiKeysPage() {
               </AnimatePresence>
 
               {/* Keys list */}
-              <Card className="border border-border-subtle/80 bg-bg/80 backdrop-blur-sm">
+              <Card className="border border-border-subtle bg-bg-surface shadow-soft">
                 <div className="flex items-start justify-between border-b border-border-subtle/80 pb-4">
                   <div>
                     <h2 className="text-sm font-semibold text-fg">Your keys</h2>
@@ -390,12 +381,15 @@ export default function ApiKeysPage() {
                               {maskKey(key.apikey)}
                             </span>
                             <span
-                              className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium ${
+                              className={`inline-flex items-center gap-1 rounded-pill px-2 py-0.5 text-[10px] font-medium ${
                                 key.disabled
-                                  ? "bg-bg-elevated text-fg-soft border border-border-subtle"
-                                  : "bg-accent/15 text-accent border border-accent/40"
+                                  ? "bg-bg-subtle text-fg-soft border border-border-subtle"
+                                  : "bg-positive-soft text-positive"
                               }`}
                             >
+                              <span
+                                className={`h-1.5 w-1.5 rounded-full ${key.disabled ? "bg-fg-soft" : "bg-positive"}`}
+                              />
                               {key.disabled ? "Disabled" : "Active"}
                             </span>
                           </div>
@@ -420,30 +414,9 @@ export default function ApiKeysPage() {
                             className="h-7 w-7"
                           >
                             {copiedKeyId === key.id ? (
-                              <span className="text-[10px] font-medium">
-                                Copied
-                              </span>
+                              <Icon name="check" className="text-[16px] text-positive" />
                             ) : (
-                              <svg
-                                width="12"
-                                height="12"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              >
-                                <rect
-                                  x="9"
-                                  y="9"
-                                  width="13"
-                                  height="13"
-                                  rx="2"
-                                  ry="2"
-                                />
-                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-                              </svg>
+                              <Icon name="content_copy" className="text-[16px]" />
                             )}
                           </IconButton>
                           <Button
@@ -468,7 +441,7 @@ export default function ApiKeysPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.08, duration: 0.25 }}
             >
-              <Card className="space-y-4 border border-border-subtle/80 bg-bg/80 backdrop-blur-sm">
+              <Card className="space-y-4 border border-border-subtle bg-bg-surface shadow-soft">
                 <div className="flex flex-col gap-3">
                   <div>
                     <h2 className="text-sm font-semibold text-fg">
@@ -490,7 +463,7 @@ export default function ApiKeysPage() {
                       onClick={() => setActiveTab("curl")}
                       className={`rounded-full px-3 py-1 transition-colors ${
                         activeTab === "curl"
-                          ? "bg-bg text-fg font-medium shadow-sm"
+                          ? "bg-accent-tint text-accent-strong font-medium"
                           : "text-fg-soft hover:text-fg"
                       }`}
                     >
@@ -501,7 +474,7 @@ export default function ApiKeysPage() {
                       onClick={() => setActiveTab("javascript")}
                       className={`rounded-full px-3 py-1 transition-colors ${
                         activeTab === "javascript"
-                          ? "bg-bg text-fg font-medium shadow-sm"
+                          ? "bg-accent-tint text-accent-strong font-medium"
                           : "text-fg-soft hover:text-fg"
                       }`}
                     >
@@ -512,7 +485,7 @@ export default function ApiKeysPage() {
                       onClick={() => setActiveTab("python")}
                       className={`rounded-full px-3 py-1 transition-colors ${
                         activeTab === "python"
-                          ? "bg-bg text-fg font-medium shadow-sm"
+                          ? "bg-accent-tint text-accent-strong font-medium"
                           : "text-fg-soft hover:text-fg"
                       }`}
                     >

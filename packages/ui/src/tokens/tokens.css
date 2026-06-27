@@ -1,73 +1,78 @@
 /*
-  MarketSage design tokens — premium finance-agent UI.
-  Dark-first palette, spacing, radius, shadows, typography, motion.
-  Consumed by apps/frontend-chat, apps/landing, apps/docs.
+  Ember design system tokens — a warm, modern language for AI-native finance products.
+  Orange accent on warm-gray neutrals, Geist + Instrument Serif type, 8-pt grid, soft radii.
+  Light-first, with a derived warm-dark palette. Consumed by apps/frontend-chat,
+  apps/landing, apps/docs.
 */
 
 /* ---------- Palette ---------- */
 :root {
-  /* Light (fallback) */
-  --bg: #ffffff;
-  --bg-surface: #f8fafc;
-  --bg-elevated: #fafafa;
-  --bg-subtle: #f1f5f9;
-  --border-subtle: #e2e8f0;
-  --border-strong: #64748b;
+  /* Light — Ember default */
+  --bg: #fafaf9;          /* paper */
+  --bg-surface: #ffffff;  /* card */
+  --bg-elevated: #ffffff;
+  --bg-subtle: #f2f0ee;
+  --border-subtle: #e9e6e3; /* line */
+  --border-strong: #a8a29e; /* muted */
 
-  --fg: #0f172a;
-  --fg-muted: #475569;
-  --fg-soft: #64748b;
+  --fg: #1c1917;          /* ink */
+  --fg-muted: #57534e;    /* ink-soft */
+  --fg-soft: #a8a29e;     /* muted */
   --fg-inverse: #ffffff;
 
-  --primary: #6d28d9;
-  --primary-soft: #ede9fe;
-  --accent: #06b6d4;
-  --accent-soft: #cffafe;
-  --highlight: #ea580c;
-  --highlight-soft: #ffedd5;
+  --primary: #f26a1f;     /* warm orange accent */
+  --primary-soft: #ffe9dc;
+  --accent: #f26a1f;
+  --accent-soft: #ffe9dc;
+  --accent-strong: #e0560f;
+  --accent-tint: #fff4ed;
+  --highlight: #f26a1f;
+  --highlight-soft: #fff4ed;
 
   --danger: #dc2626;
+  --danger-soft: #fcebeb;
+  --positive: #16a34a;
+  --positive-soft: #e9f7ef;
 
-  --shadow-soft: 0 1px 3px rgba(0, 0, 0, 0.05);
-  --shadow-elevated: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-soft: 0 1px 2px rgba(28, 25, 23, 0.06);
+  --shadow-elevated: 0 6px 18px rgba(28, 25, 23, 0.08);
+  --shadow-overlay: 0 18px 44px rgba(28, 25, 23, 0.12);
 }
 
 .dark {
-  /* Dark theme — primary identity */
-  --bg: #0B0F1A;
-  --bg-surface: #0F1724;
-  --bg-elevated: #151c2c;
-  --bg-subtle: #1a2234;
-  --border-subtle: #1e293b;
-  --border-strong: #334155;
+  /* Warm Ember dark — derived (Ember ships light-only) */
+  --bg: #1c1917;
+  --bg-surface: #262220;
+  --bg-elevated: #2c2826;
+  --bg-subtle: #292524;
+  --border-subtle: #3a3531;
+  --border-strong: #57534e;
 
-  --fg: #E6EEF8;
-  --fg-muted: #9AA7B8;
-  --fg-soft: #6b7a8f;
-  --fg-inverse: #0B0F1A;
+  --fg: #fafaf9;
+  --fg-muted: #d6d3d1;
+  --fg-soft: #a8a29e;
+  --fg-inverse: #1c1917;
 
-  --primary: #7C3AED;
-  --primary-soft: #2e1065;
-  --accent: #22D3EE;
-  --accent-soft: #164e63;
-  --highlight: #F97316;
-  --highlight-soft: #7c2d12;
+  --primary: #fb7e33;
+  --primary-soft: #2a1d14;
+  --accent: #fb7e33;
+  --accent-soft: #2a1d14;
+  --accent-strong: #fdba8c;
+  --accent-tint: #2a1d14;
+  --highlight: #fb7e33;
+  --highlight-soft: #2a1d14;
 
   --danger: #f87171;
+  --danger-soft: #3a1d1d;
+  --positive: #4ade80;
+  --positive-soft: #173a28;
 
-  --shadow-soft: 0 1px 3px rgba(0, 0, 0, 0.2);
-  --shadow-elevated: 0 2px 8px rgba(0, 0, 0, 0.25);
+  --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-elevated: 0 6px 18px rgba(0, 0, 0, 0.45);
+  --shadow-overlay: 0 18px 44px rgba(0, 0, 0, 0.55);
 }
 
-/* Legacy alias for components that use --accent as primary */
-:root {
-  --accent-strong: var(--fg);
-}
-.dark {
-  --accent-strong: var(--fg);
-}
-
-/* ---------- Spacing (Tailwind-ready) ---------- */
+/* ---------- Spacing (Tailwind-ready, 8-pt rhythm) ---------- */
 :root {
   --space-1: 2px;
   --space-2: 4px;
@@ -82,9 +87,10 @@
 
 /* ---------- Border radius ---------- */
 :root {
-  --radius-sm: 6px;
+  --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 18px;
+  --radius-pill: 999px;
 }
 
 /* ---------- Typography scale (px) ---------- */
@@ -96,6 +102,26 @@
   --text-xl: 28px;
   --text-2xl: 40px;
   --text-display: 56px;
+}
+
+/* ---------- Icons (Material Symbols Rounded) ---------- */
+.material-symbols-rounded {
+  font-family: "Material Symbols Rounded";
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  font-variation-settings:
+    "FILL" 0,
+    "wght" 400,
+    "GRAD" 0,
+    "opsz" 24;
 }
 
 /* ---------- Motion ---------- */

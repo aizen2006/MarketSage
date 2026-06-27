@@ -26,13 +26,22 @@ const config: Config = {
         accent: "var(--accent)",
         "accent-soft": "var(--accent-soft)",
         "accent-strong": "var(--accent-strong)",
+        "accent-tint": "var(--accent-tint)",
         highlight: "var(--highlight)",
         "highlight-soft": "var(--highlight-soft)",
         danger: "var(--danger)",
+        "danger-soft": "var(--danger-soft)",
+        positive: "var(--positive)",
+        "positive-soft": "var(--positive-soft)",
+      },
+      fontFamily: {
+        sans: ["var(--font-geist-sans)", "system-ui", "sans-serif"],
+        serif: ["var(--font-instrument-serif)", "Georgia", "serif"],
       },
       boxShadow: {
         soft: "var(--shadow-soft)",
         elevated: "var(--shadow-elevated)",
+        overlay: "var(--shadow-overlay)",
       },
       borderRadius: {
         sm: "var(--radius-sm)",
@@ -40,6 +49,7 @@ const config: Config = {
         lg: "var(--radius-lg)",
         xl: "1rem",
         "2xl": "1.25rem",
+        pill: "var(--radius-pill)",
       },
       transitionDuration: {
         micro: "var(--motion-micro)",

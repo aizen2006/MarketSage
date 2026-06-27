@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "bun run src/index.ts",
     "start": "bun run src/index.ts",
-    "build": "echo \"backend build (no compilation step)\""
+    "build": ""
   },
   "devDependencies": {
     "@types/bun": "latest"

@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@source "../../../../packages/ui/src";
 @import "../../../../packages/ui/src/tokens/tokens.css";
 
 /*
@@ -22,20 +23,27 @@
   --color-primary-soft: var(--primary-soft);
   --color-accent: var(--accent);
   --color-accent-soft: var(--accent-soft);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-tint: var(--accent-tint);
   --color-highlight: var(--highlight);
   --color-highlight-soft: var(--highlight-soft);
-  --color-accent-strong: var(--accent-strong);
 
   --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-positive: var(--positive);
+  --color-positive-soft: var(--positive-soft);
 
   --shadow-soft: var(--shadow-soft);
   --shadow-elevated: var(--shadow-elevated);
+  --shadow-overlay: var(--shadow-overlay);
 
-  --font-sans: var(--font-inter-sans);
+  --font-sans: var(--font-geist-sans);
+  --font-serif: var(--font-instrument-serif);
 
   --radius-sm: var(--radius-sm);
   --radius-md: var(--radius-md);
   --radius-lg: var(--radius-lg);
+  --radius-pill: var(--radius-pill);
 
   --motion-micro: var(--motion-micro);
   --motion-macro: var(--motion-macro);
@@ -64,8 +72,8 @@ body {
 }
 
 ::selection {
-  background-color: var(--accent);
-  color: var(--fg-inverse);
+  background-color: var(--accent-soft);
+  color: var(--accent-strong);
 }
 
 .agent-markdown {

@@ -2,26 +2,7 @@
 
 import { motion } from "motion/react";
 import { useTheme } from "../context/ThemeContext";
-
-const SunIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
-    <circle cx="12" cy="12" r="4" />
-    <path d="M12 2v2" />
-    <path d="M12 20v2" />
-    <path d="m4.93 4.93 1.41 1.41" />
-    <path d="m17.66 17.66 1.41 1.41" />
-    <path d="M2 12h2" />
-    <path d="M20 12h2" />
-    <path d="m6.34 17.66-1.41 1.41" />
-    <path d="m19.07 4.93-1.41 1.41" />
-  </svg>
-);
-
-const MoonIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
-    <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
-  </svg>
-);
+import { Icon } from "./Icon";
 
 export function ThemeToggle() {
   const { theme, toggleTheme } = useTheme();
@@ -37,12 +18,12 @@ export function ThemeToggle() {
       aria-label="Toggle theme"
       aria-pressed={isDark}
     >
-      <span className="relative z-10 flex w-full items-center justify-between px-2 text-fg-soft">
-        <span className="flex h-6 w-6  pl- -0.5 pr-2 items-center justify-center rounded-full transition-colors">
-          <SunIcon />
+      <span className="relative z-10 flex w-full items-center justify-between px-1 text-fg-soft">
+        <span className="flex h-6 w-6 items-center justify-center">
+          <Icon name="light_mode" className="text-[15px]" />
         </span>
-        <span className="flex h-6 w-6 px-2 items-center justify-center rounded-full transition-colors">
-          <MoonIcon />
+        <span className="flex h-6 w-6 items-center justify-center">
+          <Icon name="dark_mode" className="text-[15px]" />
         </span>
       </span>
       <motion.span

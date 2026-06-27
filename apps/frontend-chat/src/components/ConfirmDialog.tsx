@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Button } from "@repo/ui";
+import { Icon } from "./Icon";
 
 interface ConfirmDialogProps {
   open: boolean;
@@ -56,9 +57,12 @@ export function ConfirmDialog({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 8, scale: 0.98 }}
             transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
-            className="relative z-50 w-full max-w-md overflow-hidden rounded-xl border border-border-subtle bg-bg-elevated shadow-[0_20px_48px_rgba(0,0,0,0.45)]"
+            className="relative z-50 w-full max-w-md overflow-hidden rounded-lg border border-border-subtle bg-bg-surface shadow-overlay"
           >
-            <div className="border-b border-border-subtle px-5 py-4">
+            <div className="flex items-center gap-3 border-b border-border-subtle px-5 py-4">
+              <span className="flex h-8 w-8 items-center justify-center rounded-[9px] bg-danger-soft text-danger">
+                <Icon name="warning" className="text-[18px]" />
+              </span>
               <h2 className="text-[16px] font-semibold tracking-tight text-fg">
                 {title}
               </h2>

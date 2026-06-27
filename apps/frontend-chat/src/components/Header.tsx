@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { ThemeToggle } from "./ThemeToggle";
 import { IconButton } from "@repo/ui";
+import { Icon } from "./Icon";
 
 const MODES = ["Quick", "Deep", "Auto"] as const;
 
@@ -45,11 +46,11 @@ export function Header({
           onClick={onToggleSidebar}
           aria-label="Toggle sidebar"
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+          <Icon name="menu" className="text-[20px]" />
         </IconButton>
         
         <nav
-          className="relative flex items-center p-1 rounded-xl bg-bg-elevated border border-border-subtle shadow-sm"
+          className="relative flex items-center p-1 rounded-pill bg-bg-subtle border border-border-subtle"
           role="tablist"
           aria-label="Mode"
         >
@@ -71,9 +72,9 @@ export function Header({
                         : "auto";
                   onModeChange?.(next);
                 }}
-                className={`relative z-10 rounded-lg px-3 py-1.5 text-[13px] font-medium transition-colors ${
+                className={`relative z-10 rounded-pill px-3.5 py-1.5 text-[13px] font-medium transition-colors ${
                   isActive
-                    ? "text-fg"
+                    ? "text-white"
                     : "text-fg-soft hover:text-fg-muted"
                 }`}
               >
@@ -84,7 +85,7 @@ export function Header({
           <motion.span
             layout
             layoutId="header-mode-pill"
-            className="absolute inset-y-1 rounded-lg bg-bg-subtle border border-border-subtle shadow-soft"
+            className="absolute inset-y-1 rounded-pill bg-accent shadow-[0_4px_12px_rgba(242,106,31,0.28)]"
             style={{
               width: "calc(33.3333% - 6px)",
               left:
@@ -125,10 +126,7 @@ export function Header({
             aria-label={insightsOpen ? "Hide insights" : "Show insights"}
             title={insightsOpen ? "Hide insights" : "Show insights"}
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M3 3v18h18" />
-              <path d="m19 9-5 5-4-4-3 3" />
-            </svg>
+            <Icon name="insights" className="text-[19px]" />
           </IconButton>
         )}
         <ThemeToggle />

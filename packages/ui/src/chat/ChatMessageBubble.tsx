@@ -32,15 +32,17 @@ export function ChatMessageBubble({ message }: ChatMessageBubbleProps) {
       {...messageEnter}
     >
       {isAgent && (
-        <div className="mt-1 h-7 w-7 rounded-full bg-accent-soft text-[0.7rem] font-semibold text-accent-strong shadow-soft">
-          <span className="flex h-full items-center justify-center">AI</span>
+        <div className="mt-1 flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-accent to-[#F8A24A] text-white shadow-[0_4px_12px_rgba(242,106,31,0.3)]">
+          <span className="material-symbols-rounded text-[17px]">
+            auto_awesome
+          </span>
         </div>
       )}
       <div
-        className={`max-w-[80%] rounded-2xl px-3 py-2 text-sm shadow-sm ${
+        className={`max-w-[80%] px-4 py-3 text-sm ${
           isAgent
-            ? "border border-subtle bg-bg-elevated text-fg"
-            : "border border-accent bg-accent-soft text-fg"
+            ? "rounded-[16px_16px_16px_4px] border border-border-subtle bg-bg-surface text-fg"
+            : "rounded-[16px_16px_4px_16px] border border-accent-soft bg-accent-tint text-fg"
         }`}
       >
         <p className="whitespace-pre-wrap text-[0.85rem] leading-relaxed">
@@ -58,7 +60,7 @@ export function ChatMessageBubble({ message }: ChatMessageBubbleProps) {
         </div>
       </div>
       {!isAgent && (
-        <div className="mt-1 h-7 w-7 rounded-full bg-bg-subtle text-[0.7rem] font-semibold text-fg-soft">
+        <div className="mt-1 h-8 w-8 rounded-full bg-bg-subtle text-[0.7rem] font-semibold text-fg-muted">
           <span className="flex h-full items-center justify-center">You</span>
         </div>
       )}

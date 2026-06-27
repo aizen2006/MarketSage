@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 import type { Message, Conversation } from "../types/chat";
 import { MessageBubble } from "./MessageBubble";
 import { TypingIndicator } from "./TypingIndicator";
+import { Icon } from "./Icon";
 interface ChatWindowProps {
   activeConversation: Conversation | null;
   messages: Message[];
@@ -31,14 +32,19 @@ export function ChatWindow({
                 transition={{ duration: 0.4 }}
                 className="mb-8"
               >
-                <div className="mx-auto mb-6 flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-[16px] font-bold text-fg-inverse">
-                  MS
+                <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-accent to-[#F8A24A] text-white shadow-[0_8px_24px_rgba(242,106,31,0.32)]">
+                  <Icon name="auto_awesome" className="text-[26px]" />
                 </div>
-                <h2 className="text-xl font-semibold tracking-tight text-fg">
-                  Real-time signals. Human-ready insights.
+                <h2 className="text-[28px] font-semibold tracking-tight text-fg">
+                  Real-time signals,{" "}
+                  <span className="font-serif italic font-normal text-accent">
+                    human-ready
+                  </span>{" "}
+                  insights.
                 </h2>
-                <p className="mt-2 text-sm text-fg-muted max-w-md mx-auto">
-                  Upload a PDF or paste a ticker to get started.
+                <p className="mt-3 text-[15px] text-fg-muted max-w-md mx-auto">
+                  Ask about a ticker, your portfolio, or today&apos;s market
+                  moves to get started.
                 </p>
               </motion.div>
 
@@ -49,16 +55,17 @@ export function ChatWindow({
                 className="flex flex-wrap justify-center gap-3 text-[13px] font-medium max-w-2xl"
               >
                 {[
-                  "Summarize my portfolio",
-                  "Check today's risk level",
-                  "Spot unusual market moves",
-                  "Calculate P&L for AAPL",
-                ].map((label) => (
+                  { label: "Summarize my portfolio", icon: "pie_chart" },
+                  { label: "Check today's risk level", icon: "shield" },
+                  { label: "Spot unusual market moves", icon: "trending_up" },
+                  { label: "Calculate P&L for AAPL", icon: "calculate" },
+                ].map(({ label, icon }) => (
                   <button
                     key={label}
                     type="button"
-                    className="rounded-lg border border-border-subtle bg-bg-surface px-4 py-2 text-fg-soft transition-colors duration-150 hover:border-border-strong hover:bg-bg-elevated hover:text-fg"
+                    className="inline-flex items-center gap-2 rounded-pill border border-border-subtle bg-bg-surface px-4 py-2 text-fg-muted shadow-soft transition-colors duration-150 hover:border-accent hover:bg-accent-tint hover:text-accent-strong"
                   >
+                    <Icon name={icon} className="text-[17px] text-accent" />
                     {label}
                   </button>
                 ))}
@@ -71,11 +78,7 @@ export function ChatWindow({
             {messages.map((message) => (
               <MessageBubble key={message.id} message={message} />
             ))}
-            {isTyping && (
-              <div className="mt-2 flex justify-start pl-12">
-                <TypingIndicator />
-              </div>
-            )}
+            {isTyping && <TypingIndicator />}
           </div>
         )}
         </div>
