@@ -34,9 +34,9 @@ RUN cd packages/db && bunx prisma generate
 
 EXPOSE 3000
 
-# Migrations run, then the server starts (see entrypoint.sh).
-COPY apps/backend/entrypoint.sh /app/entrypoint.sh
-RUN chmod +x /app/entrypoint.sh
+# entrypoint.sh already arrived with the `COPY apps/backend` step above; just
+# make it executable (no separate file COPY, which is brittle under cached builds).
+RUN chmod +x /app/apps/backend/entrypoint.sh
 
 # Liveness probe against the /health route using Bun's built-in fetch.
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
@@ -45,4 +45,4 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
 # Run as the non-root user shipped with the base image.
 USER bun
 
-ENTRYPOINT ["/app/entrypoint.sh"]
+ENTRYPOINT ["/app/apps/backend/entrypoint.sh"]
