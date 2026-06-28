@@ -1,5 +1,3 @@
-
-
 <h1 align="center">MarketSage</h1>
 
 <p align="center">
@@ -11,13 +9,14 @@
   <img src="https://img.shields.io/badge/Prisma-7-2D3748?logo=prisma&logoColor=white" alt="Prisma" />
   <img src="https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white" alt="PostgreSQL" />
   <img src="https://img.shields.io/badge/Pinecone-000000?logo=pinecone&logoColor=white" alt="Pinecone" />
+  <img src="https://img.shields.io/badge/Cloudflare_KV-F38020?logo=cloudflare&logoColor=white" alt="Cloudflare KV" />
   <img src="https://img.shields.io/badge/Turborepo-EF4444?logo=turborepo&logoColor=white" alt="Turborepo" />
   <img src="https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white" alt="Docker" />
 </p>
 
-MarketSage is a multi-agent financial research platform. It pairs a streaming chat experience with a programmatic REST API, and coordinates web search, financial data providers, retrieval-augmented memory, and LLM reasoning to help research companies, evaluate fundamentals, and track market events.
+MarketSage is a multi-agent financial research platform. A streaming-style chat experience is backed by a Bun-powered API that coordinates web search, financial data providers, retrieval-augmented memory, and LLM reasoning to help research companies, evaluate fundamentals, and track market events.
 
-The system runs three cooperating agents — Quick, Deep, and a Triage router — backed by retrieval-augmented generation (RAG) over a Pinecone vector store, and ships as a Bun-powered Turborepo monorepo.
+The system runs three cooperating agents — Quick, Deep, and a Triage router — over a Pinecone vector store for retrieval-augmented generation (RAG), and ships as a Turborepo monorepo: a **core backend** (Elysia on Bun) and a **chat web app** (Next.js) dressed in the warm **Ember** design system.
 
 ---
 
@@ -30,14 +29,14 @@ The system runs three cooperating agents — Quick, Deep, and a Triage router �
 - **Web tools** — Tavily-powered search, deep multi-source research, and page extraction.
 - **Output guardrails** — a guardrail agent reviews every response for compliance and tone before it reaches the user.
 - **Edge response caching** — read-heavy, non-chat endpoints (credits, usage logs, transactions, conversations, insights, API keys) are cached per user in Cloudflare KV with short TTLs and explicit invalidation, so the dashboard loads instantly while staying accurate.
-- **Programmatic API** — an API-key-authenticated backend with usage tracking, credit billing, and both JSON and SSE streaming endpoints.
-- **Monorepo** — five apps and shared packages orchestrated by Turborepo on Bun.
+- **Ember design system** — a warm, light-first UI language (orange accent, Geist + Instrument Serif, soft cards, pill controls) shared through `@repo/ui` and applied across the chat app.
+- **Monorepo** — two apps and shared packages orchestrated by Turborepo on Bun.
 
 ---
 
 ## How retrieval works
 
-Retrieval lives in the agent service layer of both backends, so it applies the same way to every mode (`auto`, `quick`, `deep`):
+Retrieval lives in the backend's agent service layer, so it applies the same way to every mode (`auto`, `quick`, `deep`):
 
 1. **Retrieve — before the chat.** The user's message is run through `semantic_search` against the Pinecone `finance` namespace, filtered by `userId`. Matches are formatted into a context block and appended to the prompt.
 2. **Run the agent.** The augmented prompt is sent to the selected agent. If retrieval returns nothing or fails, the chat continues anyway — RAG is best-effort and never blocks a response.
@@ -52,7 +51,7 @@ Pinecone uses **integrated embedding**: the index embeds the `text` field server
 
 ## How response caching works
 
-The core backend's non-chat `GET` endpoints are read often but change rarely, so their responses are cached per user in **Cloudflare KV**. Chat/agent endpoints are never cached (LLM output is non-deterministic), but because a chat spends credits and writes a usage log, it invalidates the affected caches.
+The backend's non-chat `GET` endpoints are read often but change rarely, so their responses are cached per user in **Cloudflare KV**. Chat/agent endpoints are never cached (LLM output is non-deterministic), but because a chat spends credits and writes a usage log, it invalidates the affected caches.
 
 1. **Read-through.** A cached endpoint first checks KV under a per-user key (`user:{userId}:{resource}`). On a hit it returns the stored value; on a miss it runs the database query, writes the result with a TTL, and returns it.
 2. **TTL + explicit invalidation.** Each resource has a short TTL *and* its key is deleted whenever the underlying data changes — so the UI is always fresh, never just eventually consistent.
@@ -77,7 +76,19 @@ The helper lives in `apps/backend/src/utils/cache.ts` (`cached`, `invalidate`, `
 2. **Quick agent** answers fast lookups — single metrics, summaries, recent figures — using web search and financial data, with structured output and confidence scores.
 3. **Deep agent** produces institutional-quality memos: executive summary, evidence-backed analysis, assumptions, and cross-source verification, drawing on financial data, web research, and the Alpha Vantage MCP server.
 4. **Guardrail agent** validates each response — rejecting guaranteed returns, fabricated figures, or promotional language, and softening overconfident claims into probabilistic language.
-5. Responses stream to the client over Server-Sent Events.
+5. The backend returns the completed answer as JSON to the chat app.
+
+---
+
+## Design system — Ember
+
+The UI is built on **Ember**, a warm, light-first design language defined once as tokens and shared through `@repo/ui`:
+
+- **Color** — a warm orange accent (`#F26A1F`) over warm-gray ("stone") neutrals, with `positive`/`danger` semantic colors. A derived warm-dark palette keeps the theme toggle working.
+- **Type** — **Geist** for UI/body, **Instrument Serif** for editorial italic accents, and **Material Symbols Rounded** for icons.
+- **Foundations** — an 8-pt spacing grid, soft radii (with a `pill` step), and three low-spread shadow steps.
+
+Tokens live in [`packages/ui/src/tokens/tokens.css`](packages/ui/src/tokens/tokens.css) and map to Tailwind v4 utilities via `@theme inline` in the app's `globals.css`. Components consume the tokens, so re-skinning is a single edit. The chat app is light-first with a working dark toggle.
 
 ---
 
@@ -85,21 +96,12 @@ The helper lives in `apps/backend/src/utils/cache.ts` (`cached`, `invalidate`, `
 
 ```mermaid
 graph TD
-    subgraph Clients
-        Chat[Chat UI - Next.js]
-        Landing[Landing - Next.js]
-        Docs[API Docs - Next.js]
-        ExtAPI[External Client - curl / SDK]
+    subgraph Client
+        Chat[Chat UI - Next.js :3001]
     end
 
-    subgraph Backends
+    subgraph Backend
         Core[Core Backend - Elysia :3000]
-        API[API Backend - Elysia :4001]
-    end
-
-    subgraph RAG
-        Search[semantic_search]
-        Store[upsert_data]
     end
 
     subgraph Agents
@@ -118,17 +120,14 @@ graph TD
     subgraph Data
         PG[(PostgreSQL - Prisma)]
         PC[(Pinecone - Vector DB)]
+        KV[(Cloudflare KV - Cache)]
     end
 
-    Chat -->|SSE, JWT cookie| Core
-    ExtAPI -->|x-api-key| API
+    Chat -->|JWT cookie| Core
     Core --> PG
-    API --> PG
-
-    Core --> Search
-    API --> Search
-    Search --> PC
-    Search --> Triage
+    Core --> KV
+    Core --> PC
+    Core --> Triage
     Triage -->|routes to| Quick
     Triage -->|routes to| Deep
 
@@ -139,8 +138,7 @@ graph TD
 
     Quick --> Guard
     Deep --> Guard
-    Guard --> Store
-    Store --> PC
+    Guard --> PC
 ```
 
 ---
@@ -151,18 +149,21 @@ graph TD
 marketSage/
 ├── apps/
 │   ├── backend/            # Core API: auth, agents (RAG), conversations, API keys, payments, user
+│   │   ├── Dockerfile          # Production image (Bun) — migrates then starts
+│   │   ├── entrypoint.sh        # prisma migrate deploy → start server
 │   │   └── src/
-│   │       ├── modules/agents/service.ts   # RAG flow + agent orchestration
-│   │       ├── utils/pinecone.ts           # Pinecone upsert + semantic search
-│   │       ├── utils/cloudflare.ts         # Cloudflare KV bulk helpers
-│   │       └── utils/cache.ts              # Per-user response cache (read-through + invalidation)
-│   ├── api-backend/        # External API: API-key auth, billing, JSON + SSE endpoints
-│   │   └── src/
-│   │       ├── modules/agents/service.ts   # RAG flow (runOnce + stream)
-│   │       └── utils/pinecone.ts           # Pinecone upsert + semantic search
-│   ├── frontend-chat/      # Chat UI with API-key management page
-│   ├── landing/            # Marketing site
-│   └── docs/               # API documentation site
+│   │       ├── app.ts               # Elysia app: CORS, /health, module mounts
+│   │       ├── modules/             # auth, agents, user, apikeys, payments
+│   │       │   └── agents/service.ts    # RAG flow + agent orchestration
+│   │       └── utils/
+│   │           ├── pinecone.ts          # Pinecone upsert + semantic search
+│   │           ├── cloudflare.ts        # Cloudflare KV bulk helpers
+│   │           └── cache.ts             # Per-user response cache (read-through + invalidation)
+│   └── frontend-chat/      # Chat web app (Ember UI) + API-key management page
+│       └── src/
+│           ├── app/                 # /signin, /signup, /chat, /api-keys
+│           ├── components/          # Chat, Composer, Sidebar, Insights, modals
+│           └── context/             # Auth + Theme providers
 ├── packages/
 │   ├── agents/             # Agent definitions and tools
 │   │   ├── triage_agent.ts     # Router
@@ -171,10 +172,9 @@ marketSage/
 │   │   ├── tools/              # web_search.ts (search/research/extract), fin_research.ts
 │   │   └── utils/tavily.ts     # Tavily client
 │   ├── db/                 # Prisma schema, migrations, generated client
-│   ├── ui/                 # Shared React UI library (@repo/ui)
+│   ├── ui/                 # Shared React UI library (@repo/ui) + Ember tokens
 │   ├── eslint-config/      # Shared ESLint configuration
 │   └── typescript-config/  # Shared TypeScript configurations
-├── docker-compose.yml      # PostgreSQL + backend + api-backend
 ├── turbo.json              # Turborepo pipeline
 └── package.json            # Workspace root
 ```
@@ -186,8 +186,8 @@ marketSage/
 | Area | Technologies |
 |---|---|
 | Language & runtime | TypeScript, Bun 1.3 |
-| Frontend | Next.js 16 (App Router, React 19), Tailwind CSS v4, motion.dev, React Markdown, shared `@repo/ui` primitives |
-| Backend | ElysiaJS on Bun, Prisma 7, `@elysiajs/jwt` (cookie auth), `@elysiajs/cors` |
+| Frontend | Next.js 16 (App Router, React 19), Tailwind CSS v4, motion.dev, React Markdown, shared `@repo/ui` (Ember design system) |
+| Backend | ElysiaJS on Bun, Prisma 7 (pg driver adapter), `@elysiajs/jwt` (cookie auth), `@elysiajs/cors` |
 | Agents | OpenAI Agents SDK, `gpt-5.4-mini` for the Triage, Quick, Deep, and Title agents, output guardrails |
 | Tools & data APIs | Tavily (search, research, extract), Financial Modeling Prep (fundamentals), Alpha Vantage MCP server (market data and indicators) |
 | Data stores | PostgreSQL 16, Pinecone (integrated-embedding vector store for RAG), Cloudflare KV (per-user response cache) |
@@ -217,7 +217,7 @@ bun install
 ```bash
 cd packages/db
 bunx prisma generate
-bunx prisma migrate dev
+bunx prisma migrate dev      # use `prisma migrate deploy` in production
 cd ../..
 ```
 
@@ -225,12 +225,14 @@ cd ../..
 
 Create `.env` files in the relevant apps and packages.
 
-#### Backend & agents
+#### Backend & agents (`apps/backend/.env`)
 
 ```env
-# Auth & database
+# Auth, database & networking
 JWT_SECRET=your-jwt-secret
 DATABASE_URL=postgresql://user:password@localhost:5432/marketsage?schema=public
+PORT=3000
+CORS_ORIGIN=http://localhost:3001
 
 # LLM and tools
 OPENAI_API_KEY=sk-...
@@ -245,22 +247,13 @@ PINECONE_INDEX=your-index-name
 CLOUDFLARE_API_KEY=your-cloudflare-api-token
 ACCOUNT_ID=your-cloudflare-account-id
 NAMESPACE_ID=your-kv-namespace-id
-
-# Networking
-CORS_ORIGIN=http://localhost:3001
-API_PORT=4001   # api-backend only
 ```
 
-#### Frontend apps
+#### Chat app (`apps/frontend-chat/.env`)
 
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:3000
-NEXT_PUBLIC_API_BACKEND_URL=http://localhost:4001
-NEXT_PUBLIC_CHAT_URL=http://localhost:3001/chat
-NEXT_PUBLIC_CHAT_SIGNIN_URL=http://localhost:3001/signin
-NEXT_PUBLIC_DOCS_URL=http://localhost:3002
-NEXT_PUBLIC_LANDING_URL=http://localhost:3001
-NEXT_PUBLIC_GITHUB_URL=https://github.com/your-org/marketsage
+NEXT_PUBLIC_API_URL=http://localhost:3000          # core backend
+NEXT_PUBLIC_API_BACKEND_URL=http://localhost:3000  # base shown in API-key code examples
 ```
 
 ### Running the project
@@ -273,29 +266,19 @@ Or per app:
 
 ```bash
 bun turbo dev --filter backend           # Core API on :3000
-bun turbo dev --filter api_backend       # External API on :4001
-bun turbo dev --filter frontend-chat     # Chat UI
-bun turbo dev --filter landing           # Marketing site
-bun turbo dev --filter docs              # Documentation
+bun turbo dev --filter frontend-chat     # Chat UI on :3001
 ```
 
 | App | Default URL |
 |---|---|
 | Core backend | `http://localhost:3000` |
-| API backend | `http://localhost:4001` |
 | Chat UI | `http://localhost:3001` |
-| Landing | `http://localhost:3002` |
-| Docs | `http://localhost:3003` |
 
 ---
 
 ## API reference
 
-RAG retrieval and persistence run transparently on every agent call.
-
-### Core backend — cookie auth
-
-Used by the chat UI. Agent routes require the JWT cookie set by `/auth/signin`.
+The backend uses cookie-based auth. Agent and dashboard routes require the JWT cookie set by `/auth/signin`. RAG retrieval and persistence run transparently on every agent call.
 
 | Method | Endpoint | Description |
 |---|---|---|
@@ -305,33 +288,19 @@ Used by the chat UI. Agent routes require the JWT cookie set by `/auth/signin`.
 | `POST` | `/agents/deep/json` | Deep agent (JSON) |
 | `POST` | `/agents/auto/json` | Auto-routed response (JSON) |
 | `POST` | `/agents/title` | Generate a short conversation title |
+| `GET` | `/user/credits` | Remaining credit balance *(cached)* |
+| `GET` | `/user/usageLog` | Per-call usage history *(cached)* |
+| `GET` | `/user/transactions` | Credit transactions *(cached)* |
+| `GET` | `/user/conversations` | List conversations *(cached)* |
+| `POST` / `PATCH` | `/user/conversations` | Create / rename a conversation |
+| `GET` | `/user/insights` | Signals + insight stream *(cached)* |
+| `POST` | `/payments/onramp` | Top up credits |
 | `POST` | `/apikeys/create` | Create an API key |
-| `GET` | `/apikeys/` | List the user's API keys |
+| `GET` | `/apikeys/` | List the user's API keys *(cached)* |
 | `PUT` | `/apikeys/` | Enable or disable an API key |
+| `GET` | `/health` | Liveness probe |
 
-The backend also exposes user dashboard routes (`/user/credits`, `/user/usageLog`, `/user/transactions`, `/user/conversations`, `/user/insights`). Their `GET` responses are cached per user in Cloudflare KV — see [How response caching works](#how-response-caching-works).
-
-### API backend — API-key auth
-
-Used by external clients. Requires an `x-api-key` header.
-
-| Method | Endpoint | Description |
-|---|---|---|
-| `POST` | `/v1/agents/quick` | Quick agent (JSON) |
-| `POST` | `/v1/agents/deep` | Deep agent (JSON) |
-| `POST` | `/v1/agents/auto` | Auto-routed agent (JSON) |
-| `GET` | `/v1/agents/quick/stream?prompt=...` | Quick agent (SSE) |
-| `GET` | `/v1/agents/deep/stream?prompt=...` | Deep agent (SSE) |
-| `GET` | `/v1/agents/auto/stream?prompt=...` | Auto-routed agent (SSE) |
-
-### Example request
-
-```bash
-curl -X POST "http://localhost:4001/v1/agents/quick" \
-  -H "Content-Type: application/json" \
-  -H "x-api-key: your-api-key" \
-  -d '{"prompt": "Summarize AAPL earnings"}'
-```
+`GET` responses marked *(cached)* are served per user from Cloudflare KV — see [How response caching works](#how-response-caching-works).
 
 ---
 
@@ -370,35 +339,30 @@ User 1──* Transactions
 
 ## Deployment
 
-### Docker Compose
+### Backend (Docker)
+
+The backend ships a production [`apps/backend/Dockerfile`](apps/backend/Dockerfile). Build it **from the repository root** (it needs the whole workspace):
 
 ```bash
-docker compose up -d
+docker build -f apps/backend/Dockerfile -t marketsage-backend .
+docker run -p 3000:3000 --env-file apps/backend/.env marketsage-backend
 ```
 
-| Service | Port | Image |
-|---|---|---|
-| `db` | 5432 | `postgres:16-alpine` |
-| `backend` | 3000 | Built from `apps/backend/Dockerfile` |
-| `api-backend` | 4001 | Built from `apps/api-backend/Dockerfile` |
+The image (`oven/bun:1.3`) installs the monorepo, generates the Prisma client, runs as a non-root user, and exposes a `/health` check. On start, [`entrypoint.sh`](apps/backend/entrypoint.sh) applies migrations (`prisma migrate deploy`) and then launches the server. Provide every secret through the environment: `JWT_SECRET`, `DATABASE_URL`, `OPENAI_API_KEY`, `TAVILY_API_KEY`, `FMP_API_KEY`, `PINECONE_API_KEY`, `PINECONE_INDEX`, `CLOUDFLARE_API_KEY`, `ACCOUNT_ID`, `NAMESPACE_ID` (and `CORS_ORIGIN`).
 
-Both backend images use `oven/bun:1`, install the monorepo, generate the Prisma client, and run migrations on startup. Provide the agent, vector-store, and cache secrets (`OPENAI_API_KEY`, `FMP_API_KEY`, `TAVILY_API_KEY`, `PINECONE_API_KEY`, `PINECONE_INDEX`, `CLOUDFLARE_API_KEY`, `ACCOUNT_ID`, `NAMESPACE_ID`) through the environment.
+On a PaaS such as Render or Fly.io, point the service at the repo root with this Dockerfile; the platform-provided `PORT` is honored automatically.
 
-### Vercel (frontend apps)
+### Chat app (Vercel)
 
-Deploy each Next.js app as its own project:
+Deploy the Next.js chat app as its own project:
 
 ```
-Root Directory: apps/frontend-chat   (or apps/landing, apps/docs)
+Root Directory: apps/frontend-chat
 Build Command:  bun run build
 Output:         .next
 ```
 
-Set the relevant `NEXT_PUBLIC_*` variables in the Vercel dashboard.
-
-### Render (backends)
-
-Deploy each backend as a Docker web service pointing at the repo root with the matching Dockerfile (`apps/backend/Dockerfile` on port 3000, `apps/api-backend/Dockerfile` on port 4001).
+Set `NEXT_PUBLIC_API_URL` (and `NEXT_PUBLIC_API_BACKEND_URL`) to your deployed backend URL.
 
 ---
 
@@ -414,7 +378,8 @@ bun run check-types # TypeScript type checking
 
 - **Add an agent tool** — create a tool in `packages/agents/tools/` and add it to the relevant agent's `tools` array.
 - **Add a backend module** — create a folder under `apps/backend/src/modules/`, define its model/service/route files, and mount it with `.use()` in `app.ts`.
-- **Add a UI primitive** — add a component in `packages/ui/src/`, export it, and consume it as `@repo/ui` across the frontends.
+- **Add a UI primitive** — add a component in `packages/ui/src/`, export it, and consume it as `@repo/ui` in the chat app.
+- **Re-skin the UI** — edit the Ember tokens in `packages/ui/src/tokens/tokens.css`; components pick the changes up automatically.
 - **Change the database** — edit `packages/db/prisma/schema.prisma`, run `bunx prisma migrate dev`, and update affected services.
 
 ---
@@ -422,10 +387,10 @@ bun run check-types # TypeScript type checking
 ## Roadmap
 
 - Ingestion pipeline to seed the Pinecone `finance` namespace with filings, news, and transcripts
-- Real-time streaming on the core backend's agent endpoints
+- Real-time SSE streaming on the backend's agent endpoints
 - Portfolio and valuation tooling (backtesting, scenario modeling)
 - Per-agent latency and quality metrics
-- Fine-grained API-key scoping and rate limits
+- A dedicated programmatic API surface for the managed API keys
 
 ---
 
@@ -436,6 +401,7 @@ bun run check-types # TypeScript type checking
 - [Next.js](https://nextjs.org) — React framework
 - [Prisma](https://prisma.io) — database ORM
 - [Pinecone](https://pinecone.io) — vector database
+- [Cloudflare KV](https://developers.cloudflare.com/kv/) — edge key-value cache
 - [Financial Modeling Prep](https://financialmodelingprep.com) — financial data
 - [Alpha Vantage](https://www.alphavantage.co) — market data and indicators
 - [Tavily](https://tavily.com) — web search and research
