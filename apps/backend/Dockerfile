@@ -9,24 +9,15 @@ WORKDIR /app
 ENV NODE_ENV=production
 
 # --- Dependencies -------------------------------------------------------------
-# Copy only the workspace manifests first so `bun install` is cached and only
-# re-runs when a dependency changes. Every workspace member's package.json must
-# be present for `--frozen-lockfile` to validate against bun.lock.
-COPY package.json bun.lock turbo.json ./
+COPY package.json bun.lock ./
 COPY apps/backend/package.json apps/backend/
-COPY apps/frontend-chat/package.json apps/frontend-chat/
-COPY packages/agents/package.json packages/agents/
 COPY packages/db/package.json packages/db/
-COPY packages/ui/package.json packages/ui/
-COPY packages/eslint-config/package.json packages/eslint-config/
-COPY packages/typescript-config/package.json packages/typescript-config/
-
-RUN bun install --frozen-lockfile
+COPY packages/agents/package.json packages/agents/
+RUN bun install
 
 # --- Application source --------------------------------------------------------
-# Only the backend and shared packages are needed at runtime (the Next.js apps
-# are intentionally excluded to keep the image small).
-COPY packages ./packages
+COPY packages/db ./packages/db
+COPY packages/agents ./packages/agents
 COPY apps/backend ./apps/backend
 
 # Generate the Prisma client (driver-adapter / pg — no native engine binary).
@@ -34,8 +25,7 @@ RUN cd packages/db && bunx prisma generate
 
 EXPOSE 3000
 
-# entrypoint.sh already arrived with the `COPY apps/backend` step above; just
-# make it executable (no separate file COPY, which is brittle under cached builds).
+# Make the entrypoint executable (it arrived with the COPY apps/backend step).
 RUN chmod +x /app/apps/backend/entrypoint.sh
 
 # Liveness probe against the /health route using Bun's built-in fetch.
